@@ -7,21 +7,21 @@ produtos = [
         'cod_produto': '0001',
         'nome_produto': 'produto1',
         'valor_produo': 10.5,
-        'ativo': True
+        'ativo': 'sim'
     },
     {
         'id_produto': 2,
         'cod_produto': '0002',
         'nome_produto': 'produto2',
         'valor_produo': 11.5,
-        'ativo': True
+        'ativo': 'sim'
     },
     {
         'id_produto': 3,
         'cod_produto': '0003',
         'nome_produto': 'produto3',
         'valor_produto': 11.5,
-        'ativo': True
+        'ativo': 'sim'
     }
 ]
 
@@ -52,11 +52,14 @@ class Produto(Resource):
 
     def post(self, id_produto):
         dados = Produto.argumentos.parse_args()
-        produto_obj = ProdutoModel(id_produto, **dados)
-        novo_produto = produto_obj.json()
 
-        produtos.append(novo_produto)
-        return novo_produto, 200
+        if ProdutoModel.find_produto(dados['cod_produto']):
+            return {'mensagem': 'Produto com código "{}" já existe.'
+                    .format(dados['cod_produto'])}, 400
+
+        produto = ProdutoModel(id_produto, **dados)
+        produto.save_produto()
+        return produto.json(), 200
 
     def put(self, id_produto):
         dados = Produto.argumentos.parse_args()
