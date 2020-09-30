@@ -1,80 +1,70 @@
 from flask_restful import Resource, reqparse
-from models.produto import ProdutoModel
-
-produtos = [
-    {
-        'id_produto': 1,
-        'cod_produto': '0001',
-        'nome_produto': 'produto1',
-        'valor_produo': 10.5,
-        'ativo': 'sim'
-    },
-    {
-        'id_produto': 2,
-        'cod_produto': '0002',
-        'nome_produto': 'produto2',
-        'valor_produo': 11.5,
-        'ativo': 'sim'
-    },
-    {
-        'id_produto': 3,
-        'cod_produto': '0003',
-        'nome_produto': 'produto3',
-        'valor_produto': 11.5,
-        'ativo': 'sim'
-    }
-]
+from models.produto_model import ProdutoModel
 
 
 class Produtos(Resource):
     def get(self):
-        return {'produtos': produtos}
+        order = [produto.json() for produto in ProdutoModel.query.all()]
+        return {'produtos': order}
 
 
 class Produto(Resource):
     argumentos = reqparse.RequestParser()
-    argumentos.add_argument('cod_produto')
-    argumentos.add_argument('nome_produto')
-    argumentos.add_argument('valor_produto')
-    argumentos.add_argument('ativo')
-
-    def find_produto(id_produto):
-        for produto in produtos:
-            if produto['id_produto'] == id_produto:
-                return produto
-        return None
+    argumentos.add_argument('cod_produto', type=str,
+                            required=True, help="Campo obrigatório.")
+    argumentos.add_argument('nome_produto',  type=str,
+                            required=True, help="Campo obrigatório.")
+    argumentos.add_argument('valor_produto', type=float,
+                            required=True, help="Campo obrigatório.")
+    argumentos.add_argument('ativo', type=str, required=True)
 
     def get(self, id_produto):
-        produto = Produto.find_produto(id_produto)
+        produto = ProdutoModel.find_produto(id_produto)
         if produto:
-            return produto
+            return produto.json()
         return {'mensagem': 'Produto não encontrado.'}, 404
 
     def post(self, id_produto):
         dados = Produto.argumentos.parse_args()
 
-        if ProdutoModel.find_produto(dados['cod_produto']):
+        if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
             return {'mensagem': 'Produto com código "{}" já existe.'
                     .format(dados['cod_produto'])}, 400
 
         produto = ProdutoModel(id_produto, **dados)
-        produto.save_produto()
+
+        try:
+            produto.save_produto()
+        except ValueError:
+            return {'mensagem': 'Erro ao salvar o produto.'}, 500
         return produto.json(), 200
 
     def put(self, id_produto):
         dados = Produto.argumentos.parse_args()
-        produto_obj = ProdutoModel(id_produto, **dados)
-        novo_produto = produto_obj.json()
 
-        produto = Produto.find_produto(id_produto)
-        if produto:
-            produto.update(dados)
-            return novo_produto, 200
+        produto_encontrado = ProdutoModel.find_produto(id_produto)
+        if produto_encontrado:
+            produto_encontrado.update_produto(**dados)
+            produto_encontrado.save_produto()
+            return produto_encontrado.json(), 200
 
-        produtos.append(novo_produto)
-        return novo_produto, 201
+        if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
+            return {'mensagem': 'Produto com código "{}" já existe.'
+                    .format(dados['cod_produto'])}, 400
+
+        produto = ProdutoModel(id_produto, **dados)
+        try:
+            produto.save_produto()
+        except ValueError:
+            return {'mensagem': 'Erro ao salvar o produto.'}, 500
+        return produto.json(), 201
 
     def delete(self, id_produto):
-        global produtos
-        produtos = [p for p in produtos if p['id_produto'] != id_produto]
-        return {'mensagem': 'Produto deletado.'}
+        produto = ProdutoModel.find_produto(id_produto)
+        if produto:
+            try:
+                produto.delete_produto()
+            except ValueError:
+                return {'mensagem': 'Erro ao excluir o produto.'}, 500
+            return {'mensagem': 'Produto excluído.'}
+        return {'mensagem': 'Produto não encontrado.'}, 404
