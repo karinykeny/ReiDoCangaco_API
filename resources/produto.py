@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.produto_model import ProdutoModel
+from flask_jwt_extended import jwt_required
 
 
 class Produtos(Resource):
@@ -24,6 +25,7 @@ class Produto(Resource):
             return produto.json()
         return {'mensagem': 'Produto não encontrado.'}, 404
 
+    @jwt_required
     def post(self, id_produto):
         dados = Produto.argumentos.parse_args()
 
@@ -39,6 +41,7 @@ class Produto(Resource):
             return {'mensagem': 'Erro ao salvar o produto.'}, 500
         return produto.json(), 200
 
+    @jwt_required
     def put(self, id_produto):
         dados = Produto.argumentos.parse_args()
 
@@ -59,6 +62,7 @@ class Produto(Resource):
             return {'mensagem': 'Erro ao salvar o produto.'}, 500
         return produto.json(), 201
 
+    @jwt_required
     def delete(self, id_produto):
         produto = ProdutoModel.find_produto(id_produto)
         if produto:
