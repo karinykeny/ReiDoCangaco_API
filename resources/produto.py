@@ -1,12 +1,73 @@
 from flask_restful import Resource, reqparse
 from models.produto_model import ProdutoModel
 from flask_jwt_extended import jwt_required
+import sqlite3
+
+path_params = reqparse.RequestParser()
+path_params.add_argument('nome_produto', type=str)
+path_params.add_argument('valor_max', type=float)
+path_params.add_argument('valor_min', type=float)
+path_params.add_argument('ativo', type=str)
+
+
+def normalize_path_params(nome_produto=None,
+                          valor_max=10000,
+                          valor_min=0,
+                          ativo="sim"):
+
+    if nome_produto:
+        return {
+            'nome_produto': nome_produto,
+            'valor_max': valor_max,
+            'valor_min': valor_min,
+            'ativo': ativo
+        }
+
+    return {
+        'valor_max': valor_max,
+        'valor_min': valor_min,
+        'ativo': ativo
+    }
 
 
 class Produtos(Resource):
+
     def get(self):
-        order = [produto.json() for produto in ProdutoModel.query.all()]
-        return {'produtos': order}
+        connection = sqlite3.connect('reicangaco.db')
+        cursor = connection.cursor()
+
+        dados = path_params.parse_args()
+        dados_validos = {chave: dados[chave]
+                         for chave in dados if dados[chave] is not None}
+        parametros = normalize_path_params(**dados_validos)
+
+        if not parametros.get('nome_produto'):
+            consulta = "SELECT * FROM produto \
+                WHERE valor_produto < ? AND valor_produto > ? \
+                AND ativo = ?"
+            tupla = tuple([parametros[chave] for chave in parametros])
+            resultado = cursor.execute(consulta, tupla)
+
+        else:
+            consulta = "SELECT * FROM produto \
+                WHERE nome_produto LIKE ? AND \
+                valor_produto < ? AND valor_produto > ? \
+                AND ativo = ?"
+            params = [parametros[chave] for chave in parametros]
+            resultado = cursor.execute(consulta, (
+                '%' + params[0] + '%', params[1], params[2], params[3]))
+
+        produtos = []
+        for linha in resultado:
+            produtos.append({
+                'id_produto': linha[0],
+                'cod_produto': linha[1],
+                'nome_produto':  linha[2],
+                'valor_produto': linha[3],
+                'ativo': linha[4]
+            })
+
+        return {'produtos': produtos}
 
 
 class Produto(Resource):
