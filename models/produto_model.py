@@ -9,14 +9,20 @@ class ProdutoModel(db.Model):
     nome_produto = db.Column(db.String(150), nullable=False)
     valor_produto = db.Column(db.Float(precision=2), nullable=False)
     ativo = db.Column(db.String(3), nullable=False)
+    cod_categoria = db.Column(db.Integer, db.ForeignKey(
+        'categoria_model.cod_categoria'))
+    cod_fornecedor = db.Column(db.Integer, db.ForeignKey(
+        'fornecedor_model.cod_fornecedor'))
 
     def __init__(self, id_produto, cod_produto, nome_produto,
-                 valor_produto, ativo):
+                 valor_produto, ativo, cod_categoria, cod_fornecedor):
         self.id_produto = id_produto
         self.cod_produto = cod_produto
         self.nome_produto = nome_produto
         self.valor_produto = valor_produto
         self.ativo = ativo
+        self.cod_categoria = cod_categoria
+        self.cod_fornecedor = cod_fornecedor
 
     def json(self):
         return {
@@ -24,7 +30,9 @@ class ProdutoModel(db.Model):
             'cod_produto': self.cod_produto,
             'nome_produto':  self.nome_produto,
             'valor_produto': self.valor_produto,
-            'ativo': self.ativo
+            'ativo': self.ativo,
+            'cod_categoria': self.cod_categoria,
+            'cod_fornecedor': self.cod_fornecedor
         }
 
     @classmethod

@@ -1,5 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.produto_model import ProdutoModel
+from resources.filtros import normalize_path_params_produto
+from resources.filtros import consulta_sem_nome_produto
+from resources.filtros import consulta_com_nome_produto
 from flask_jwt_extended import jwt_required
 import sqlite3
 
@@ -8,26 +11,6 @@ path_params.add_argument('nome_produto', type=str)
 path_params.add_argument('valor_max', type=float)
 path_params.add_argument('valor_min', type=float)
 path_params.add_argument('ativo', type=str)
-
-
-def normalize_path_params(nome_produto=None,
-                          valor_max=10000,
-                          valor_min=0,
-                          ativo="sim"):
-
-    if nome_produto:
-        return {
-            'nome_produto': nome_produto,
-            'valor_max': valor_max,
-            'valor_min': valor_min,
-            'ativo': ativo
-        }
-
-    return {
-        'valor_max': valor_max,
-        'valor_min': valor_min,
-        'ativo': ativo
-    }
 
 
 class Produtos(Resource):
@@ -39,22 +22,15 @@ class Produtos(Resource):
         dados = path_params.parse_args()
         dados_validos = {chave: dados[chave]
                          for chave in dados if dados[chave] is not None}
-        parametros = normalize_path_params(**dados_validos)
+        parametros = normalize_path_params_produto(**dados_validos)
 
         if not parametros.get('nome_produto'):
-            consulta = "SELECT * FROM produto \
-                WHERE valor_produto < ? AND valor_produto > ? \
-                AND ativo = ?"
             tupla = tuple([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, tupla)
+            resultado = cursor.execute(consulta_sem_nome_produto, tupla)
 
         else:
-            consulta = "SELECT * FROM produto \
-                WHERE nome_produto LIKE ? AND \
-                valor_produto < ? AND valor_produto > ? \
-                AND ativo = ?"
             params = [parametros[chave] for chave in parametros]
-            resultado = cursor.execute(consulta, (
+            resultado = cursor.execute(consulta_com_nome_produto, (
                 '%' + params[0] + '%', params[1], params[2], params[3]))
 
         produtos = []
