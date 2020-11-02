@@ -5,7 +5,10 @@ from resources.produto import Produtos, Produto, ProdutoCadastro
 from resources.fornecedor import Fornecedores, Fornecedor, FornecedorCadastro
 from resources.categoria import Categorias, Categoria, CategoriaCadastro
 from resources.vendedor import Vendedores, Vendedor, VendedorRegistro
+from resources.contato import Contato, ContatoCadastro
 from resources.vendedor import VendedorLogin, VendedorLogout
+from resources.formaPagamento import FormasPagamento, FormaPagamento
+from resources.formaPagamento import FormaPagamentoCadastro
 from blacklist import blacklist
 
 app = Flask(__name__)
@@ -35,12 +38,17 @@ def token_de_acesso_invalidado():
 api.add_resource(Produtos, '/produtos')
 api.add_resource(ProdutoCadastro, '/produtos/cadastro')
 api.add_resource(Produto, '/produtos/<int:id_produto>')
+api.add_resource(FormasPagamento, '/formas-de-pagamento')
+api.add_resource(FormaPagamento, '/forma-de-pagamento/<int:cod_formaPgameno>')
+api.add_resource(FormaPagamentoCadastro, '/forma-de-pagamento/cadastro')
 api.add_resource(Fornecedores, '/fornecedores')
 api.add_resource(FornecedorCadastro, '/fornecedores/cadastro')
 api.add_resource(Fornecedor, '/fornecedores/<int:cod_fornecedor>')
 api.add_resource(Categorias, '/categorias')
 api.add_resource(CategoriaCadastro, '/categorias/cadastro')
 api.add_resource(Categoria, '/categorias/<int:cod_categoria>')
+api.add_resource(ContatoCadastro, '/contato/cadastro')
+api.add_resource(Contato, '/contato/<int:cod_contato>')
 api.add_resource(Vendedores, '/usuarios')
 api.add_resource(Vendedor, '/usuarios/<int:cod_vendedor>')
 api.add_resource(VendedorRegistro, '/cadastro')

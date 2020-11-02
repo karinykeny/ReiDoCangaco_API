@@ -9,6 +9,7 @@ class FornecedorModel(db.Model):
     nome_fantasia = db.Column(db.String(150), nullable=False)
     razao_social = db.Column(db.String(150), nullable=False)
     ativo = db.Column(db.String(3), nullable=False)
+    contato = db.relationship("ContatoModel")
 
     def __init__(self, cnpj_cpf, nome_fantasia, razao_social, ativo):
         self.cnpj_cpf = cnpj_cpf
@@ -22,7 +23,8 @@ class FornecedorModel(db.Model):
             'cnpj_cpf': self.cnpj_cpf,
             'nome_fantasia': self.nome_fantasia,
             'razao_social': self.razao_social,
-            'Ativo': self.ativo
+            'Ativo': self.ativo,
+            'contatos': [contato.json() for contato in self.contato]
         }
 
     @classmethod
