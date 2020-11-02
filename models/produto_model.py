@@ -1,4 +1,6 @@
 from sql_alchemy import db
+from models.fornecedor_model import FornecedorModel
+from models.categoria_model import CategoriaModel
 
 
 class ProdutoModel(db.Model):
@@ -9,14 +11,14 @@ class ProdutoModel(db.Model):
     nome_produto = db.Column(db.String(150), nullable=False)
     valor_produto = db.Column(db.Float(precision=2), nullable=False)
     ativo = db.Column(db.String(3), nullable=False)
-    cod_categoria = db.Column(db.Integer, db.ForeignKey(
-        'categoria_model.cod_categoria'))
-    cod_fornecedor = db.Column(db.Integer, db.ForeignKey(
-        'fornecedor_model.cod_fornecedor'))
+    cod_categoria = db.Column(
+        db.Integer, db.ForeignKey('categoria.cod_categoria'))
+    cod_fornecedor = db.Column(
+        db.Integer, db.ForeignKey('fornecedor.cod_fornecedor'))
+    fornecedor = db.relationship("FornecedorModel")
 
-    def __init__(self, id_produto, cod_produto, nome_produto,
+    def __init__(self, cod_produto, nome_produto,
                  valor_produto, ativo, cod_categoria, cod_fornecedor):
-        self.id_produto = id_produto
         self.cod_produto = cod_produto
         self.nome_produto = nome_produto
         self.valor_produto = valor_produto
@@ -31,8 +33,10 @@ class ProdutoModel(db.Model):
             'nome_produto':  self.nome_produto,
             'valor_produto': self.valor_produto,
             'ativo': self.ativo,
-            'cod_categoria': self.cod_categoria,
-            'cod_fornecedor': self.cod_fornecedor
+            'categoria': ProdutoModel.__json_categoria(
+                self, self.cod_categoria),
+            'fornecedor': ProdutoModel.__json_fornecedor(
+                self, self.cod_fornecedor)
         }
 
     @classmethod
@@ -53,12 +57,23 @@ class ProdutoModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_produto(self, cod_produto, nome_produto, valor_produto, ativo):
+    def update_produto(self, cod_produto, nome_produto, valor_produto, ativo,
+                       cod_categoria, cod_fornecedor):
         self.cod_produto = cod_produto
         self.nome_produto = nome_produto
         self.valor_produto = valor_produto
         self.ativo = ativo
+        self.cod_categoria = cod_categoria
+        self.cod_fornecedor = cod_fornecedor
 
     def delete_produto(self):
         db.session.delete(self)
         db.session.commit()
+
+    def __json_categoria(self, cod_categoria):
+        categoria = CategoriaModel.find_categoria(cod_categoria)
+        return categoria.json()
+
+    def __json_fornecedor(self, cod_fornecedor):
+        fornecedor = FornecedorModel.find_fornecedor(cod_fornecedor)
+        return fornecedor.json()

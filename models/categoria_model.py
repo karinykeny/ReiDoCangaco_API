@@ -6,22 +6,26 @@ class CategoriaModel(db.Model):
 
     cod_categoria = db.Column(db.Integer, primary_key=True)
     nome_categoria = db.Column(db.String(50), nullable=False)
-    produtos = db.relationship('ProdutoModel')
 
-    def __init__(self, cod_categoria, nome_categoria):
-        self.cod_categoria = cod_categoria
+    def __init__(self, nome_categoria):
         self.nome_categoria = nome_categoria
 
     def json(self):
         return {
             'cod_categoria': self.cod_categoria,
-            'nome_categoria': self.nome_categoria,
-            'produtos': [produto.json() for produto in self.produtos]
+            'nome_categoria': self.nome_categoria
         }
 
     @classmethod
     def find_categoria(cls, cod_categoria):
         categoria = cls.query.filter_by(cod_categoria=cod_categoria).first()
+        if categoria:
+            return categoria
+        return None
+
+    @classmethod
+    def find_categoria_nome(cls, nome_categoria):
+        categoria = cls.query.filter_by(nome_categoria=nome_categoria).first()
         if categoria:
             return categoria
         return None

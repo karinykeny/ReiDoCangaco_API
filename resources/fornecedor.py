@@ -1,45 +1,14 @@
 from flask_restful import Resource, reqparse
 from models.fornecedor_model import FornecedorModel
-from resources.filtros import normalize_path_params_fornecedor
-from resources.filtros import consulta_fornecedor
 from flask_jwt_extended import jwt_required
-import sqlite3
-
-path_params = reqparse.RequestParser()
-path_params.add_argument('cnpj_cpf', type=str)
-path_params.add_argument('nome_fantasia', type=float)
-path_params.add_argument('ativo', type=str)
 
 
 class Fornecedores(Resource):
 
     def get(self):
-        connection = sqlite3.connect('reicangaco.db')
-        cursor = connection.cursor()
-
-        dados = path_params.parse_args()
-        dados_validos = {chave: dados[chave]
-                         for chave in dados if dados[chave] is not None}
-        parametros = normalize_path_params_fornecedor(**dados_validos)
-        tupla = tuple([parametros[chave] for chave in parametros])
-        consulta = consulta_fornecedor
-
-        if parametros.get('cnpj_cpf'):
-            consulta = consulta + "AND cnpj_cpf = ?"
-        if parametros.get('nome_produto'):
-            consulta = consulta + "AND nome_produto = ?"
-
-        resultado = cursor.execute(consulta, tupla)
-        fornecedores = []
-        for linha in resultado:
-            fornecedores.append({
-                'cod_fornecedor': linha[0],
-                'cnpj_cpf': linha[1],
-                'nome_fantasia': linha[2],
-                'ativo': linha[3]
-            })
-
-        return {'fornecedores': fornecedores}
+        order = [fornecedor.json()
+                 for fornecedor in FornecedorModel.query.all()]
+        return {'fornecedores': order}
 
 
 class Fornecedor(Resource):
@@ -48,6 +17,8 @@ class Fornecedor(Resource):
                             required=True, help="Campo obrigatório.")
     argumentos.add_argument('nome_fantasia',  type=str,
                             required=True, help="Campo obrigatório.")
+    argumentos.add_argument('razao_social',  type=str,
+                            required=True, help="Campo obrigatório.")
     argumentos.add_argument('ativo', type=str, required=True)
 
     def get(self, cod_fornecedor):
@@ -55,22 +26,6 @@ class Fornecedor(Resource):
         if fornecedor:
             return fornecedor.json()
         return {'mensagem': 'Produto não encontrado.'}, 404
-
-    @jwt_required
-    def post(self, cod_fornecedor):
-        dados = Fornecedor.argumentos.parse_args()
-
-        if FornecedorModel.find_fornecedor(dados['cod_fornecedor']):
-            return {'mensagem': 'Fornecedor com código "{}" já existe.'
-                    .format(dados['cod_produto'])}, 400
-
-        fornecedor = FornecedorModel(cod_fornecedor, **dados)
-
-        try:
-            fornecedor.save_fornecedor()
-        except ValueError:
-            return {'mensagem': 'Erro ao salvar o fornecedor.'}, 500
-        return fornecedor.json(), 200
 
     @jwt_required
     def put(self, cod_fornecedor):
@@ -103,3 +58,21 @@ class Fornecedor(Resource):
                 return {'mensagem': 'Erro ao excluir o fornecedor.'}, 500
             return {'mensagem': 'Fornecedor excluído.'}
         return {'mensagem': 'Fornecedor não encontrado.'}, 404
+
+
+class FornecedorCadastro(Resource):
+    @jwt_required
+    def post(self):
+        dados = Fornecedor.argumentos.parse_args()
+
+        if FornecedorModel.find_fornecedor_cnpj_cpf(dados['cnpj_cpf']):
+            return {'mensagem': 'CNPJ/CPF "{}" já existe.'
+                    .format(dados['cnpj_cpf'])}, 400
+
+        fornecedor = FornecedorModel(**dados)
+
+        try:
+            fornecedor.save_fornecedor()
+        except ValueError:
+            return {'mensagem': 'Erro ao salvar o fornecedor.'}, 500
+        return fornecedor.json(), 200

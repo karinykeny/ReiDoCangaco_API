@@ -1,8 +1,9 @@
 from flask_jwt_extended import JWTManager
 from flask import Flask, jsonify
 from flask_restful import Api
-from resources.produto import Produtos, Produto
-from resources.fornecedor import Fornecedores, Fornecedor
+from resources.produto import Produtos, Produto, ProdutoCadastro
+from resources.fornecedor import Fornecedores, Fornecedor, FornecedorCadastro
+from resources.categoria import Categorias, Categoria, CategoriaCadastro
 from resources.vendedor import Vendedores, Vendedor, VendedorRegistro
 from resources.vendedor import VendedorLogin, VendedorLogout
 from blacklist import blacklist
@@ -32,9 +33,14 @@ def token_de_acesso_invalidado():
 
 
 api.add_resource(Produtos, '/produtos')
+api.add_resource(ProdutoCadastro, '/produtos/cadastro')
 api.add_resource(Produto, '/produtos/<int:id_produto>')
 api.add_resource(Fornecedores, '/fornecedores')
+api.add_resource(FornecedorCadastro, '/fornecedores/cadastro')
 api.add_resource(Fornecedor, '/fornecedores/<int:cod_fornecedor>')
+api.add_resource(Categorias, '/categorias')
+api.add_resource(CategoriaCadastro, '/categorias/cadastro')
+api.add_resource(Categoria, '/categorias/<int:cod_categoria>')
 api.add_resource(Vendedores, '/usuarios')
 api.add_resource(Vendedor, '/usuarios/<int:cod_vendedor>')
 api.add_resource(VendedorRegistro, '/cadastro')
