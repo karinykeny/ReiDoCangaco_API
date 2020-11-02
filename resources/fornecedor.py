@@ -53,7 +53,7 @@ class Fornecedor(Resource):
         fornecedor = FornecedorModel.find_fornecedor(cod_fornecedor)
         if fornecedor:
             try:
-                fornecedor.save_fornecedor()
+                fornecedor.delete_fornecedor()
             except ValueError:
                 return {'mensagem': 'Erro ao excluir o fornecedor.'}, 500
             return {'mensagem': 'Fornecedor excluído.'}
