@@ -2,6 +2,8 @@ from sql_alchemy import db
 
 
 class FormaPagamentoModel(db.Model):
+    __tablename__ = 'forma_pagamento'
+
     cod_formaPgameno = db.Column(db.Integer, primary_key=True)
     tipo_formaPagamento = db.Column(db.String(50), nullable=False)
     descricao_formaPagamento = db.Column(db.String(50), nullable=False)

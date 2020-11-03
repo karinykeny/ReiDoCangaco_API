@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.pedido_model import PedidoModel
+from models.vendedor_model import VendedorModel
+from models.forma_pagemento_model import FormaPagamentoModel
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
@@ -9,6 +11,10 @@ argumentos.add_argument('data_pedido',  type=str,
                         required=True, help="Campo obrigatório.")
 argumentos.add_argument('status',  type=str,
                         required=True, help="Campo obrigatório.")
+argumentos.add_argument('cod_vendedor',  type=int,
+                        required=True, help="Campo obrigatório.")
+argumentos.add_argument('cod_formaPgameno',  type=int,
+                        required=True, help="Campo obrigatório.")
 
 
 class Pedidos(Resource):
@@ -16,7 +22,7 @@ class Pedidos(Resource):
     def get(self):
         order = [pedido.json()
                  for pedido in PedidoModel.query.all()]
-        return {'fornecedores': order}
+        return {'pedidos': order}
 
 
 class Pedido(Resource):
@@ -64,6 +70,15 @@ class PedidoCadastro(Resource):
     @jwt_required
     def post(self):
         dados = argumentos.parse_args()
+
+        if not VendedorModel.find_vendedor(dados['cod_vendedor']):
+            return {'mensagem': 'Vendedor com código "{}" não existe.'
+                    .format(dados['cod_vendedor'])}, 400
+
+        if not FormaPagamentoModel.find_formaPagamento(
+                dados['cod_formaPgameno']):
+            return {'mensagem': 'Forma de pagamento com código "{}" não existe'
+                    .format(dados['cod_formaPgameno'])}, 400
 
         pedido = PedidoModel(**dados)
 

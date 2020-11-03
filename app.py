@@ -9,6 +9,8 @@ from resources.contato import Contato, ContatoCadastro
 from resources.vendedor import VendedorLogin, VendedorLogout
 from resources.formaPagamento import FormasPagamento, FormaPagamento
 from resources.formaPagamento import FormaPagamentoCadastro
+from resources.pedido import Pedido, Pedidos, PedidoCadastro
+from resources.produtoPedido import ProdutoPedido, ProdutoPedidoCadastro
 from blacklist import blacklist
 
 app = Flask(__name__)
@@ -54,6 +56,12 @@ api.add_resource(Vendedor, '/usuarios/<int:cod_vendedor>')
 api.add_resource(VendedorRegistro, '/cadastro')
 api.add_resource(VendedorLogin, '/login')
 api.add_resource(VendedorLogout, '/logout')
+api.add_resource(Pedidos, '/pedidos')
+api.add_resource(PedidoCadastro, '/pedidos/cadastro')
+api.add_resource(Pedido, '/pedidos/<int:cod_pedido>')
+api.add_resource(ProdutoPedidoCadastro, '/produto-pedido/cadastro')
+api.add_resource(ProdutoPedido, '/produto-pedido/<int:cod_nota>')
+
 
 if __name__ == '__main__':
     from sql_alchemy import db

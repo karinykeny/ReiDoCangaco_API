@@ -1,16 +1,19 @@
 from flask_restful import Resource, reqparse
 from models.produto_pedido_model import ProdutoPedidoModel
+from models.pedido_model import PedidoModel
+from models.produto_model import ProdutoModel
 from flask_jwt_extended import jwt_required
 
 
 argumentos = reqparse.RequestParser()
-argumentos.add_argument('cnpj_cpf', type=str,
+argumentos.add_argument('qtd_produto', type=int,
                         required=True, help="Campo obrigatório.")
-argumentos.add_argument('nome_fantasia',  type=str,
+argumentos.add_argument('valor_parcial',  type=float,
                         required=True, help="Campo obrigatório.")
-argumentos.add_argument('razao_social',  type=str,
+argumentos.add_argument('cod_pedido',  type=int,
                         required=True, help="Campo obrigatório.")
-argumentos.add_argument('ativo', type=str, required=True)
+argumentos.add_argument('id_produto',  type=int,
+                        required=True, help="Campo obrigatório.")
 
 
 class ProdutoPedido(Resource):
@@ -58,6 +61,14 @@ class ProdutoPedidoCadastro(Resource):
     @jwt_required
     def post(self):
         dados = argumentos.parse_args()
+
+        if not PedidoModel.find_pedido(dados['cod_pedido']):
+            return {'mensagem': 'Pedido com código "{}" não existe.'
+                    .format(dados['cod_pedido'])}, 400
+
+        if not ProdutoModel.find_produto(dados['id_produto']):
+            return {'mensagem': 'Produto com id "{}" não existe.'
+                    .format(dados['id_produto'])}, 400
 
         pp = ProdutoPedidoModel(**dados)
 
