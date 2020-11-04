@@ -51,5 +51,6 @@ class FornecedorModel(db.Model):
         self.ativo = ativo
 
     def delete_fornecedor(self):
+        [contato.delete_contato() for contato in self.contato]
         db.session.delete(self)
         db.session.commit()

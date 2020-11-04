@@ -53,6 +53,20 @@ class ProdutoModel(db.Model):
             return produto
         return None
 
+    @classmethod
+    def find_produto_categoria(cls, cod_fornecedor):
+        produto = cls.query.filter_by(cod_fornecedor=cod_fornecedor).first()
+        if produto:
+            return produto
+        return None
+
+    @classmethod
+    def find_produto_fornecedor(cls, cod_categoria):
+        produto = cls.query.filter_by(cod_categoria=cod_categoria).first()
+        if produto:
+            return produto
+        return None
+
     def save_produto(self):
         db.session.add(self)
         db.session.commit()

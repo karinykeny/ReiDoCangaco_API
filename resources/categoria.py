@@ -1,5 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.categoria_model import CategoriaModel
+from models.produto_model import ProdutoModel
+from resources.mensagem import categoriaEmUso, categoriaNaoEncontrada
+from resources.mensagem import categoriaJaExiste, erroSalvarCategoria
+from resources.mensagem import erroExcluirCategoria, categoriaExcluida
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
@@ -19,7 +23,7 @@ class Categoria(Resource):
         categoria = CategoriaModel.find_categoria(cod_categoria)
         if categoria:
             return categoria.json()
-        return {'mensagem': 'Categoria não encontrado.'}, 404
+        return categoriaNaoEncontrada
 
     @jwt_required
     def put(self, cod_categoria):
@@ -31,27 +35,30 @@ class Categoria(Resource):
             categoria_encontrada.save_categoria()
             return categoria_encontrada.json(), 200
 
-        if CategoriaModel.find_categoria(dados['cod_categoria']):
-            return {'mensagem': 'Categoria com código "{}" já existe.'
-                    .format(dados['cod_categoria'])}, 400
+        if CategoriaModel.find_categoria_nome(dados['nome_categoria']):
+            return categoriaJaExiste(dados['nome_categoria'])
 
         categoria = CategoriaModel(cod_categoria, **dados)
         try:
             categoria.save_categoria()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar a categora.'}, 500
+            return erroSalvarCategoria
         return categoria.json(), 201
 
     @jwt_required
     def delete(self, cod_categoria):
         categoria = CategoriaModel.find_categoria(cod_categoria)
+
+        if ProdutoModel.find_produto_categoria(cod_categoria):
+            return categoriaEmUso(cod_categoria)
+
         if categoria:
             try:
                 categoria.delete_categoria()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir a categoria.'}, 500
-            return {'mensagem': 'Categoria excluída.'}
-        return {'mensagem': 'Categoria não encontrada.'}, 404
+                return erroExcluirCategoria
+            return categoriaExcluida
+        return categoriaNaoEncontrada
 
 
 class CategoriaCadastro(Resource):
@@ -60,13 +67,12 @@ class CategoriaCadastro(Resource):
     def post(self):
         dados = argumentos.parse_args()
         if CategoriaModel.find_categoria_nome(dados['nome_categoria']):
-            return {'mensagem': 'Categoria "{}" já existe.'
-                    .format(dados['nome_categoria'])}, 400
+            return categoriaJaExiste(dados['nome_categoria'])
 
         categoria = CategoriaModel(**dados)
 
         try:
             categoria.save_categoria()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar a categoria.'}, 500
+            return erroSalvarCategoria
         return categoria.json(), 200

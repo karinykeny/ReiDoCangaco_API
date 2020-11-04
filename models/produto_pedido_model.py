@@ -36,6 +36,22 @@ class ProdutoPedidoModel(db.Model):
             return pp
         return None
 
+    @classmethod
+    def find_produto(cls, id_produto):
+        pp = cls.query.filter_by(
+            id_produto=id_produto).first()
+        if pp:
+            return pp
+        return None
+
+    @classmethod
+    def find_pedido(cls, cod_pedido):
+        pp = cls.query.filter_by(
+            cod_pedido=cod_pedido).first()
+        if pp:
+            return pp
+        return None
+
     def save_produtoPedido(self):
         db.session.add(self)
         db.session.commit()

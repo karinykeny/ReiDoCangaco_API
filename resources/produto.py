@@ -2,7 +2,9 @@ from flask_restful import Resource, reqparse
 from models.produto_model import ProdutoModel
 from models.fornecedor_model import FornecedorModel
 from models.categoria_model import CategoriaModel
+from models.produto_pedido_model import ProdutoPedidoModel
 from flask_jwt_extended import jwt_required
+from resources.mensagem import produtoEmUso
 
 
 class Produtos(Resource):
@@ -56,6 +58,9 @@ class Produto(Resource):
 
     @jwt_required
     def delete(self, id_produto):
+        if ProdutoPedidoModel.find_produto(id_produto):
+            return produtoEmUso(id_produto)
+
         produto = ProdutoModel.find_produto(id_produto)
         if produto:
             try:
