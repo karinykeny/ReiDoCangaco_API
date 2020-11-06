@@ -39,6 +39,22 @@ class PedidoModel(db.Model):
             return pedido
         return None
 
+    @classmethod
+    def find_pedido_vendedor(cls, cod_vendedor):
+        pedido = cls.query.filter_by(
+            cod_vendedor=cod_vendedor).first()
+        if pedido:
+            return pedido
+        return None
+
+    @classmethod
+    def find_pedido_formaPgameno(cls, cod_formaPgameno):
+        pedido = cls.query.filter_by(
+            cod_formaPgameno=cod_formaPgameno).first()
+        if pedido:
+            return pedido
+        return None
+
     def save_pedido(self):
         db.session.add(self)
         db.session.commit()

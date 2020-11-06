@@ -1,5 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.forma_pagemento_model import FormaPagamentoModel
+from models.pedido_model import PedidoModel
+from resources.mensagem import formaPagamentoEmUso, FPNaoEncontrada
+from resources.mensagem import fPJaExiste, erroSalvarFP
+from resources.mensagem import erroExcluirFP, FPExcluida
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
@@ -22,7 +26,7 @@ class FormaPagamento(Resource):
         contato = FormaPagamentoModel.find_formaPagamento(cod_formaPgameno)
         if contato:
             return contato.json()
-        return {'msg': 'Forma de pagamento não encontrado.'}, 404
+        return FPNaoEncontrada
 
     @jwt_required
     def put(self, cod_formaPgameno):
@@ -35,27 +39,30 @@ class FormaPagamento(Resource):
             fp_encontrada.save_formaPagamento()
             return fp_encontrada.json(), 200
 
-        if FormaPagamentoModel.find_formaPagamento(dados['cod_formaPgameno']):
-            return {'msg': 'Forma de pagamento com código "{}" já existe.'
-                    .format(dados['cod_formaPgameno'])}, 400
+        if FormaPagamentoModel.find_formaPagamento_tipo(
+                dados['tipo_formaPagamento']):
+            return fPJaExiste(dados['tipo_formaPagamento'])
 
         fp = FormaPagamentoModel(cod_formaPgameno, **dados)
         try:
             fp.save_formaPagamento()
         except ValueError:
-            return {'msg': 'Erro ao salvar a forma de pagamento.'}, 500
+            return erroSalvarFP
         return fp.json(), 201
 
     @jwt_required
     def delete(self, cod_formaPgameno):
+        if PedidoModel.find_pedido_formaPgameno(cod_formaPgameno):
+            return formaPagamentoEmUso(cod_formaPgameno)
+
         fp = FormaPagamentoModel.find_formaPagamento(cod_formaPgameno)
         if fp:
             try:
                 fp.delete_formaPagamento()
             except ValueError:
-                return {'msg': 'Erro ao excluir a forma de pagamento.'}, 500
-            return {'msg': 'Forma de pagamento excluída.'}
-        return {'msg': 'Forma de pagamento não encontrado.'}, 404
+                return erroExcluirFP
+            return FPExcluida
+        return FPNaoEncontrada
 
 
 class FormaPagamentoCadastro(Resource):
@@ -65,13 +72,12 @@ class FormaPagamentoCadastro(Resource):
 
         if FormaPagamentoModel.find_formaPagamento_tipo(
                 dados['tipo_formaPagamento']):
-            return {'msg': 'Forma de pagamento "{}" já existe.'
-                    .format(dados['tipo_formaPagamento'])}, 400
+            return fPJaExiste(dados['tipo_formaPagamento'])
 
         fp = FormaPagamentoModel(**dados)
 
         try:
             fp.save_formaPagamento()
         except ValueError:
-            return {'msg': 'Erro ao salvar a forma de pagamento.'}, 500
+            return erroSalvarFP
         return fp.json(), 200

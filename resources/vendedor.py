@@ -1,8 +1,14 @@
 from flask_restful import Resource, reqparse
 from models.vendedor_model import VendedorModel
+from models.pedido_model import PedidoModel
+from resources.mensagem import vendedorEmUso, vendedorNaoEncontrado
+from resources.mensagem import erroExcluirVendedor, fornecedorExcluido
+from resources.mensagem import loginExiste, vendedorCriado, loginInvalido
+from resources.mensagem import logout
 from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from werkzeug.security import safe_str_cmp
 from blacklist import blacklist
+
 
 atributos = reqparse.RequestParser()
 atributos.add_argument('nome_vendedor')
@@ -25,18 +31,21 @@ class Vendedor(Resource):
         vendedor = VendedorModel.find_vendedor(cod_vendedor)
         if vendedor:
             return vendedor.json()
-        return {'mensagem': 'Vendedor não encontrado.'}, 404
+        return vendedorNaoEncontrado
 
     @jwt_required
     def delete(self, cod_vendedor):
+        if PedidoModel.find_pedido_vendedor(cod_vendedor):
+            return vendedorEmUso(cod_vendedor)
+
         vendedor = VendedorModel.find_vendedor(cod_vendedor)
         if vendedor:
             try:
                 vendedor.delete_vendedor()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir o vendedor.'}, 500
-            return {'mensagem': 'Vendedor excluído.'}
-        return {'mensagem': 'Vendedor não encontrado.'}, 404
+                return erroExcluirVendedor
+            return fornecedorExcluido
+        return vendedorNaoEncontrado
 
 
 class VendedorRegistro(Resource):
@@ -44,12 +53,11 @@ class VendedorRegistro(Resource):
     def post(self):
         dados = atributos.parse_args()
         if VendedorModel.find_by_login(dados['login']):
-            return {'mensagem': 'Login "{}" já existe.'
-                    .format(dados['login'])}, 400
+            return loginExiste(dados['login'])
 
         vendedor = VendedorModel(**dados)
         vendedor.save_vendedor()
-        return {'mensagem': 'Vendedor criado com sucesso!'}, 201
+        return vendedorCriado
 
 
 class VendedorLogin(Resource):
@@ -63,7 +71,7 @@ class VendedorLogin(Resource):
             token_de_acesso = create_access_token(
                 identity=vendedor.cod_vendedor)
             return {'access_token': token_de_acesso}, 200
-        return {'mensagem': 'login ou senha inválidos!'}, 401
+        return loginInvalido
 
 
 class VendedorLogout(Resource):
@@ -72,4 +80,4 @@ class VendedorLogout(Resource):
     def post(self):
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
-        return {'mensagem': 'Logout com sucesso!'}, 200
+        return logout

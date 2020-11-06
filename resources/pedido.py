@@ -1,7 +1,12 @@
 from flask_restful import Resource, reqparse
 from models.pedido_model import PedidoModel
 from models.vendedor_model import VendedorModel
+from models.produto_pedido_model import ProdutoPedidoModel
 from models.forma_pagemento_model import FormaPagamentoModel
+from resources.mensagem import pedidoEmUso, pedidoNaoEncontrado
+from resources.mensagem import vendedorNaoEncontrado, FPNaoEncontrada
+from resources.mensagem import erroSalvarPedido, erroExcluirPedido
+from resources.mensagem import pedidoExcluido
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
@@ -31,7 +36,7 @@ class Pedido(Resource):
         pedido = PedidoModel.find_pedido(cod_pedido)
         if pedido:
             return pedido.json()
-        return {'mensagem': 'Pedido não encontrado.'}, 404
+        return pedidoNaoEncontrado
 
     @jwt_required
     def put(self, cod_pedido):
@@ -43,27 +48,33 @@ class Pedido(Resource):
             pedido_encontrado.save_pedido()
             return pedido_encontrado.json(), 200
 
-        if PedidoModel.find_pedido(dados['cod_pedido']):
-            return {'mensagem': 'Pedido com código "{}" já existe.'
-                    .format(dados['cod_pedido'])}, 400
+        if not VendedorModel.find_vendedor(dados['cod_vendedor']):
+            return vendedorNaoEncontrado
+
+        if not FormaPagamentoModel.find_formaPagamento(
+                dados['cod_formaPgameno']):
+            return FPNaoEncontrada
 
         pedido = PedidoModel(cod_pedido, **dados)
         try:
             pedido.save_pedido()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o pedido.'}, 500
+            return erroSalvarPedido
         return pedido.json(), 201
 
     @jwt_required
     def delete(self, cod_pedido):
+        if ProdutoPedidoModel.find_pedido(cod_pedido):
+            return pedidoEmUso(cod_pedido)
+
         pedido = PedidoModel.find_pedido(cod_pedido)
         if pedido:
             try:
                 pedido.delete_pedido()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir o pedido.'}, 500
-            return {'mensagem': 'Pedido excluído.'}
-        return {'mensagem': 'Fornecedor não encontrado.'}, 404
+                return erroExcluirPedido
+            return pedidoExcluido
+        return pedidoNaoEncontrado
 
 
 class PedidoCadastro(Resource):
@@ -72,18 +83,16 @@ class PedidoCadastro(Resource):
         dados = argumentos.parse_args()
 
         if not VendedorModel.find_vendedor(dados['cod_vendedor']):
-            return {'mensagem': 'Vendedor com código "{}" não existe.'
-                    .format(dados['cod_vendedor'])}, 400
+            return vendedorNaoEncontrado
 
         if not FormaPagamentoModel.find_formaPagamento(
                 dados['cod_formaPgameno']):
-            return {'mensagem': 'Forma de pagamento com código "{}" não existe'
-                    .format(dados['cod_formaPgameno'])}, 400
+            return FPNaoEncontrada
 
         pedido = PedidoModel(**dados)
 
         try:
             pedido.save_pedido()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o pedido.'}, 500
+            return erroSalvarPedido
         return pedido.json(), 200
