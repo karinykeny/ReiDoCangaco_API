@@ -24,6 +24,15 @@ class VendedorModel(db.Model):
             'ativo': self.ativo
         }
 
+    def jsonPut(self):
+        return {
+            'cod_vendedor': self.cod_vendedor,
+            'nome_vendedor': self.nome_vendedor,
+            'login':  self.login,
+            'senha': self.senha,
+            'ativo': self.ativo
+        }
+
     @classmethod
     def find_vendedor(cls, cod_vendedor):
         vendedor = cls.query.filter_by(cod_vendedor=cod_vendedor).first()
@@ -41,6 +50,14 @@ class VendedorModel(db.Model):
     def save_vendedor(self):
         db.session.add(self)
         db.session.commit()
+
+    def update_vendedor(self, cod_vendedor, nome_vendedor, login,
+                        senha, ativo):
+        self.cod_vendedor = cod_vendedor
+        self.nome_vendedor = nome_vendedor
+        self.login = login
+        self.senha = senha
+        self.ativo = ativo
 
     def delete_vendedor(self):
         db.session.delete(self)

@@ -43,21 +43,24 @@ class Produto(Resource):
     def put(self, id_produto):
         dados = Produto.argumentos.parse_args()
 
+        if not CategoriaModel.find_categoria(dados['cod_categoria']):
+            return categoriaNaoEncontrada
+
+        if not FornecedorModel.find_fornecedor(dados['cod_fornecedor']):
+            return fornecedorNaoEncontrado
+
         produto_encontrado = ProdutoModel.find_produto(id_produto)
         if produto_encontrado:
-            produto_encontrado.update_produto(**dados)
-            produto_encontrado.save_produto()
+            if produto_encontrado.getCodProduto() != dados['cod_produto']:
+                if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
+                    return produtoJaExiste(dados['cod_produto'])
+            produto_encontrado.update_produto(id_produto, **dados)
+            try:
+                produto_encontrado.save_produto()
+            except ValueError:
+                return erroSalvarProduto
             return produto_encontrado.json(), 200
-
-        if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
-            return produtoJaExiste(dados['cod_produto'])
-
-        produto = ProdutoModel(id_produto, **dados)
-        try:
-            produto.save_produto()
-        except ValueError:
-            return erroSalvarProduto
-        return produto.json(), 201
+        return produtoNaoEncontrado
 
     @jwt_required
     def delete(self, id_produto):

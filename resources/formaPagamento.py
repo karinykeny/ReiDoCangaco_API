@@ -35,20 +35,17 @@ class FormaPagamento(Resource):
         fp_encontrada = FormaPagamentoModel.find_formaPagamento(
             cod_formaPgameno)
         if fp_encontrada:
-            fp_encontrada.update_formaPagamento(**dados)
-            fp_encontrada.save_formaPagamento()
+            if fp_encontrada.getTipoFormaPagamento() != dados['tipo_formaPagamento']:
+                if FormaPagamentoModel.find_formaPagamento_tipo(
+                        dados['tipo_formaPagamento']):
+                    return fPJaExiste(dados['tipo_formaPagamento'])
+            fp_encontrada.update_formaPagamento(cod_formaPgameno, **dados)
+            try:
+                fp_encontrada.save_formaPagamento()
+            except ValueError:
+                return erroSalvarFP
             return fp_encontrada.json(), 200
-
-        if FormaPagamentoModel.find_formaPagamento_tipo(
-                dados['tipo_formaPagamento']):
-            return fPJaExiste(dados['tipo_formaPagamento'])
-
-        fp = FormaPagamentoModel(cod_formaPgameno, **dados)
-        try:
-            fp.save_formaPagamento()
-        except ValueError:
-            return erroSalvarFP
-        return fp.json(), 201
+        return FPNaoEncontrada
 
     @jwt_required
     def delete(self, cod_formaPgameno):

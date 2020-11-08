@@ -45,9 +45,12 @@ class FornecedorModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_fornecedor(self, cnpj_cpf, nome_fantasia, ativo):
+    def update_fornecedor(self, cod_fornecedor, cnpj_cpf, nome_fantasia,
+                          razao_social, ativo):
+        self.cod_fornecedor = cod_fornecedor
         self.cnpj_cpf = cnpj_cpf
         self.nome_fantasia = nome_fantasia
+        self.razao_social = razao_social
         self.ativo = ativo
 
     def delete_fornecedor(self):

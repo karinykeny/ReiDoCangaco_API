@@ -33,22 +33,19 @@ class ProdutoPedido(Resource):
 
         pp_encontrado = ProdutoPedidoModel.find_produtoPedido(cod_nota)
         if pp_encontrado:
+            if not PedidoModel.find_pedido(dados['cod_pedido']):
+                return pedidoNaoEncontrado
+
+            if not ProdutoModel.find_produto(dados['id_produto']):
+                return produtoNaoEncontrado
+
             pp_encontrado.update_produtoPedido(**dados)
-            pp_encontrado.save_produtoPedido()
+            try:
+                pp_encontrado.save_produtoPedido()
+            except ValueError:
+                return erroSalavarPP
             return pp_encontrado.json(), 200
-
-        if not PedidoModel.find_pedido(dados['cod_pedido']):
-            return pedidoNaoEncontrado
-
-        if not ProdutoModel.find_produto(dados['id_produto']):
-            return produtoNaoEncontrado
-
-        pp = ProdutoPedidoModel(cod_nota, **dados)
-        try:
-            pp.save_produtoPedido()
-        except ValueError:
-            return erroSalavarPP
-        return pp.json(), 201
+        return pPNaoEncontrado
 
     @jwt_required
     def delete(self, cod_nota):

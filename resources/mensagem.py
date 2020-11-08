@@ -15,7 +15,7 @@ erroSalvarProduto = {'mensagem': 'Erro ao salvar o produto.'}, 500
 
 erroExcluirProduto = {'mensagem': 'Erro ao excluir o produto.'}, 500
 
-produtoExcluido = {'mensagem': 'Produto excluído.'}, 204
+produtoExcluido = {'mensagem': 'Produto excluído.'}
 
 
 # Categoria
@@ -35,7 +35,7 @@ erroSalvarCategoria = {'mensagem': 'Erro ao salvar a categora.'}, 500
 
 erroExcluirCategoria = {'mensagem': 'Erro ao excluir a categoria.'}, 500
 
-categoriaExcluida = {'mensagem': 'Categoria excluída.'}, 204
+categoriaExcluida = {'mensagem': 'Categoria excluída.'}
 
 
 # Fornecedor
@@ -60,7 +60,7 @@ fornecedorNaoEncontrado = {'mensagem': 'Fornecedor não encontrado.'}, 404
 
 erroExcluirFornecedor = {'mensagem': 'Erro ao excluir o fornecedor.'}, 500
 
-fornecedorExcluido = {'mensagem': 'Fornecedor excluído.'}, 204
+fornecedorExcluido = {'mensagem': 'Fornecedor excluído.'}
 
 
 # Vendedor
@@ -73,11 +73,13 @@ def loginExiste(login):
     return {'mensagem': 'Login "{}" já existe.'.format(login)}, 400
 
 
+erroSalvarVendedor = {'mensagem': 'Erro ao salvar o fornecedor.'}, 500
+
 vendedorNaoEncontrado = {'mensagem': 'Vendedor não encontrado.'}, 404
 
 erroExcluirVendedor = {'mensagem': 'Erro ao excluir o vendedor.'}, 500
 
-fornecedorExcluido = {'mensagem': 'Vendedor excluído.'}, 204
+vendedorExcluido = {'mensagem': 'Vendedor excluído.'}
 
 vendedorCriado = {'mensagem': 'Vendedor criado com sucesso!'}, 201
 
@@ -103,7 +105,7 @@ erroSalvarFP = {'mensagem': 'Erro ao salvar a forma de pagamento.'}, 500
 
 erroExcluirFP = {'mensagem': 'Erro ao excluir a forma de pagamento.'}, 500
 
-FPExcluida = {'mensagem': 'Forma de pagamento excluída.'}, 204
+FPExcluida = {'mensagem': 'Forma de pagamento excluída.'}
 
 
 # Pedido
@@ -118,7 +120,7 @@ erroSalvarPedido = {'mensagem': 'Erro ao salvar o pedido.'}, 500
 
 erroExcluirPedido = {'mensagem': 'Erro ao excluir o pedido.'}, 500
 
-pedidoExcluido = {'mensagem': 'Pedido excluído.'}, 204
+pedidoExcluido = {'mensagem': 'Pedido excluído.'}
 
 
 # Contato
@@ -133,7 +135,7 @@ erroSalvarContato = {'mensagem': 'Erro ao salvar o contato.'}, 500
 
 erroExcluirContato = {'mensagem': 'Erro ao excluir o contato.'}, 500
 
-contatoExcluido = {'mensagem': 'Contato excluído.'}, 204
+contatoExcluido = {'mensagem': 'Contato excluído.'}
 
 
 # Produto/Pedido
@@ -143,4 +145,4 @@ erroSalavarPP = {'mensagem': 'Erro ao salvar o Produto/Pedido.'}, 500
 
 erroExcluirPP = {'mensagem': 'Erro ao excluir o Produto/Pedido.'}, 500
 
-pPExcluido = {'mensagem': 'Produto/Pedido excluído.'}, 204
+pPExcluido = {'mensagem': 'Produto/Pedido excluído.'}

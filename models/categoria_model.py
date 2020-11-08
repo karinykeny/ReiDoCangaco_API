@@ -34,7 +34,8 @@ class CategoriaModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_categoria(self, nome_categoria):
+    def update_categoria(self, cod_categoria, nome_categoria):
+        self.cod_categoria = cod_categoria
         self.nome_categoria = nome_categoria
 
     def delete_categoria(self):

@@ -42,12 +42,6 @@ class Pedido(Resource):
     def put(self, cod_pedido):
         dados = argumentos.parse_args()
 
-        pedido_encontrado = PedidoModel.find_pedido(cod_pedido)
-        if pedido_encontrado:
-            pedido_encontrado.update_pedido(**dados)
-            pedido_encontrado.save_pedido()
-            return pedido_encontrado.json(), 200
-
         if not VendedorModel.find_vendedor(dados['cod_vendedor']):
             return vendedorNaoEncontrado
 
@@ -55,12 +49,15 @@ class Pedido(Resource):
                 dados['cod_formaPgameno']):
             return FPNaoEncontrada
 
-        pedido = PedidoModel(cod_pedido, **dados)
-        try:
-            pedido.save_pedido()
-        except ValueError:
-            return erroSalvarPedido
-        return pedido.json(), 201
+        pedido_encontrado = PedidoModel.find_pedido(cod_pedido)
+        if pedido_encontrado:
+            pedido_encontrado.update_pedido(**dados)
+            try:
+                pedido_encontrado.save_pedido()
+            except ValueError:
+                return erroSalvarPedido
+            return pedido_encontrado.json(), 200
+        return pedidoNaoEncontrado
 
     @jwt_required
     def delete(self, cod_pedido):
