@@ -5,7 +5,7 @@ class FornecedorModel(db.Model):
     __tablename__ = 'fornecedor'
 
     cod_fornecedor = db.Column(db.Integer, primary_key=True)
-    cnpj_cpf = db.Column(db.String(18), nullable=False)
+    cnpj_cpf = db.Column(db.String(18), unique=True, nullable=False)
     nome_fantasia = db.Column(db.String(150), nullable=False)
     razao_social = db.Column(db.String(150), nullable=False)
     ativo = db.Column(db.String(3), nullable=False)
