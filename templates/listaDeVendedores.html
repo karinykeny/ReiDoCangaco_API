@@ -1,0 +1,35 @@
+{% extends 'home.html' %}
+{% block content %}
+<h1>Vendedores Castrados</h1>
+<br>
+<table class="table table-sm">
+    <thead>
+      <tr>
+        <th scope="col">Código</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Login</th>
+        <th scope="col">Status</th>
+        <th scope="col"><i class="fa fa-pencil fa-fw"></i></th>
+        <th scope="col"><i class="fa fa-trash-o fa-fw"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Administrador</td>
+        <td>admin</td>
+        <td>Ativo</td>
+        <td><i class="fa fa-pencil fa-fw"></i></td>
+        <td><i class="fa fa-trash-o fa-fw"></i></td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>João Gilberto</td>
+        <td>joao</td>
+        <td>Ativo</td>
+        <td><i class="fa fa-pencil fa-fw"></i></td>
+        <td><i class="fa fa-trash-o fa-fw"></i></td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
