@@ -50,7 +50,7 @@ def fornecedorJaExiste(cod_fornecedor):
 
 
 def cnpjCpfJaExiste(cnpj_cpf):
-    return {'mensagem': 'CNPJ/CPF "{}" já existe.'
+    return {'mensagem': 'CNPJ/CPF "{}" já foi cadastrado.'
             .format(cnpj_cpf)}, 400
 
 

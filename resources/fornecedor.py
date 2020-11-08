@@ -73,7 +73,7 @@ class FornecedorCadastro(Resource):
         dados = Fornecedor.argumentos.parse_args()
 
         if FornecedorModel.find_fornecedor_cnpj_cpf(dados['cnpj_cpf']):
-            return cnpjCpfJaExiste
+            return cnpjCpfJaExiste(dados['cnpj_cpf'])
 
         fornecedor = FornecedorModel(**dados)
 
