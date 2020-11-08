@@ -1,5 +1,5 @@
 from flask_jwt_extended import JWTManager
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_restful import Api
 from resources.produto import Produtos, Produto, ProdutoCadastro
 from resources.fornecedor import Fornecedores, Fornecedor, FornecedorCadastro
@@ -22,6 +22,26 @@ app.config['JWT_SECRET_KEY'] = 'DontTellAnyone'
 app.config['JWT_BLACKLIST_ENEBLED'] = True
 api = Api(app)
 jwt = JWTManager(app)
+
+
+@app.route('/')
+def login_page():
+    return render_template('login.html')
+
+
+@app.route('/home')
+def home_page():
+    return render_template('home.html')
+
+
+@app.route('/usuarios')
+def vendedor_list():
+    return render_template('listaDeVendedores.html')
+
+
+@app.route('/cadastro')
+def vendedor_cadastro_page():
+    return render_template('vendedorCadastro.html')
 
 
 @app.before_first_request
@@ -67,7 +87,7 @@ api.add_resource(Contato, '/contato/<int:cod_contato>')
 api.add_resource(Vendedores, '/usuarios')
 api.add_resource(Vendedor, '/usuarios/<int:cod_vendedor>')
 api.add_resource(VendedorRegistro, '/cadastro')
-api.add_resource(VendedorLogin, '/login')
+api.add_resource(VendedorLogin, '/')
 api.add_resource(VendedorLogout, '/logout')
 
 # Pedido
@@ -83,3 +103,5 @@ if __name__ == '__main__':
     from sql_alchemy import db
     db.init_app(app)
     app.run(debug=True)
+
+app.run()

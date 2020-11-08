@@ -16,7 +16,7 @@ argumentos.add_argument('senha', type=str,
                         required=True, help="Campo obrigatório.")
 argumentos.add_argument('login', type=str,
                         required=True, help="Campo obrigatório.")
-argumentos.add_argument('ativo')
+argumentos.add_argument('ativo', type=bool)
 
 
 class Vendedores(Resource):
@@ -70,6 +70,7 @@ class VendedorRegistro(Resource):
             return loginExiste(dados['login'])
 
         vendedor = VendedorModel(**dados)
+        vendedor.ativo = True
         vendedor.save_vendedor()
         return vendedorCriado
 
@@ -82,9 +83,11 @@ class VendedorLogin(Resource):
         vendedor = VendedorModel.find_by_login(dados['login'])
 
         if vendedor and safe_str_cmp(vendedor.senha, dados['senha']):
-            token_de_acesso = create_access_token(
-                identity=vendedor.cod_vendedor)
-            return {'access_token': token_de_acesso}, 200
+            if vendedor.ativo:
+                token_de_acesso = create_access_token(
+                    identity=vendedor.cod_vendedor)
+                return {'access_token': token_de_acesso}, 400
+            return {'message': 'Usuário não confirmado.'}, 200
         return loginInvalido
 
 

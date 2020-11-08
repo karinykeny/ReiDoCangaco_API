@@ -8,7 +8,7 @@ class VendedorModel(db.Model):
     nome_vendedor = db.Column(db.String(150))
     login = db.Column(db.String(50), nullable=False)
     senha = db.Column(db.String(50), nullable=False)
-    ativo = db.Column(db.String(3))
+    ativo = db.Column(db.Boolean, default=True)
 
     def __init__(self, nome_vendedor, login, senha, ativo):
         self.nome_vendedor = nome_vendedor
