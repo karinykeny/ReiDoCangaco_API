@@ -87,7 +87,7 @@ api.add_resource(Contato, '/contato/<int:cod_contato>')
 api.add_resource(Vendedores, '/usuarios')
 api.add_resource(Vendedor, '/usuarios/<int:cod_vendedor>')
 api.add_resource(VendedorRegistro, '/cadastro')
-api.add_resource(VendedorLogin, '/')
+api.add_resource(VendedorLogin, '/login')
 api.add_resource(VendedorLogout, '/logout')
 
 # Pedido
