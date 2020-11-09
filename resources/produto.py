@@ -3,6 +3,10 @@ from models.produto_model import ProdutoModel
 from models.fornecedor_model import FornecedorModel
 from models.categoria_model import CategoriaModel
 from models.produto_pedido_model import ProdutoPedidoModel
+from resources.mensagem import produtoJaExiste, produtoNaoEncontrado
+from resources.mensagem import erroSalvarProduto, erroExcluirProduto
+from resources.mensagem import produtoExcluido, categoriaNaoEncontrada
+from resources.mensagem import fornecedorNaoEncontrado
 from flask_jwt_extended import jwt_required
 from resources.mensagem import produtoEmUso
 
@@ -33,28 +37,30 @@ class Produto(Resource):
         produto = ProdutoModel.find_produto(id_produto)
         if produto:
             return produto.json()
-        return {'mensagem': 'Produto não encontrado.'}, 404
+        return produtoNaoEncontrado
 
     @jwt_required
     def put(self, id_produto):
         dados = Produto.argumentos.parse_args()
 
+        if not CategoriaModel.find_categoria(dados['cod_categoria']):
+            return categoriaNaoEncontrada
+
+        if not FornecedorModel.find_fornecedor(dados['cod_fornecedor']):
+            return fornecedorNaoEncontrado
+
         produto_encontrado = ProdutoModel.find_produto(id_produto)
         if produto_encontrado:
-            produto_encontrado.update_produto(**dados)
-            produto_encontrado.save_produto()
+            if produto_encontrado.getCodProduto() != dados['cod_produto']:
+                if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
+                    return produtoJaExiste(dados['cod_produto'])
+            produto_encontrado.update_produto(id_produto, **dados)
+            try:
+                produto_encontrado.save_produto()
+            except ValueError:
+                return erroSalvarProduto
             return produto_encontrado.json(), 200
-
-        if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
-            return {'mensagem': 'Produto com código "{}" já existe.'
-                    .format(dados['cod_produto'])}, 400
-
-        produto = ProdutoModel(id_produto, **dados)
-        try:
-            produto.save_produto()
-        except ValueError:
-            return {'mensagem': 'Erro ao salvar o produto.'}, 500
-        return produto.json(), 201
+        return produtoNaoEncontrado
 
     @jwt_required
     def delete(self, id_produto):
@@ -66,9 +72,9 @@ class Produto(Resource):
             try:
                 produto.delete_produto()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir o produto.'}, 500
-            return {'mensagem': 'Produto excluído.'}
-        return {'mensagem': 'Produto não encontrado.'}, 404
+                return erroExcluirProduto
+            return produtoExcluido
+        return produtoNaoEncontrado
 
 
 class ProdutoCadastro(Resource):
@@ -78,21 +84,18 @@ class ProdutoCadastro(Resource):
         dados = Produto.argumentos.parse_args()
 
         if ProdutoModel.find_produto_by_cod(dados['cod_produto']):
-            return {'mensagem': 'Produto com código "{}" já existe.'
-                    .format(dados['cod_produto'])}, 400
+            return produtoJaExiste(dados['cod_produto'])
 
         if not CategoriaModel.find_categoria(dados['cod_categoria']):
-            return {'mensagem': 'Categoria com código "{}" não existe.'
-                    .format(dados['cod_categoria'])}, 400
+            return categoriaNaoEncontrada
 
         if not FornecedorModel.find_fornecedor(dados['cod_fornecedor']):
-            return {'mensagem': 'Fornecedor com código "{}" não existe.'
-                    .format(dados['cod_fornecedor'])}, 400
+            return fornecedorNaoEncontrado
 
         produto = ProdutoModel(**dados)
 
         try:
             produto.save_produto()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o produto.'}, 500
+            return erroSalvarProduto
         return produto.json(), 200

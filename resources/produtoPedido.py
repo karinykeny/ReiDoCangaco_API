@@ -2,6 +2,9 @@ from flask_restful import Resource, reqparse
 from models.produto_pedido_model import ProdutoPedidoModel
 from models.pedido_model import PedidoModel
 from models.produto_model import ProdutoModel
+from resources.mensagem import produtoNaoEncontrado, pedidoNaoEncontrado
+from resources.mensagem import pPNaoEncontrado, erroSalavarPP
+from resources.mensagem import erroExcluirPP, pPExcluido
 from flask_jwt_extended import jwt_required
 
 
@@ -22,7 +25,7 @@ class ProdutoPedido(Resource):
         pp = ProdutoPedidoModel.find_produtoPedido(cod_nota)
         if pp:
             return pp.json()
-        return {'mensagem': 'Produto/Pedido não encontrado.'}, 404
+        return pPNaoEncontrado
 
     @jwt_required
     def put(self, cod_nota):
@@ -30,20 +33,19 @@ class ProdutoPedido(Resource):
 
         pp_encontrado = ProdutoPedidoModel.find_produtoPedido(cod_nota)
         if pp_encontrado:
+            if not PedidoModel.find_pedido(dados['cod_pedido']):
+                return pedidoNaoEncontrado
+
+            if not ProdutoModel.find_produto(dados['id_produto']):
+                return produtoNaoEncontrado
+
             pp_encontrado.update_produtoPedido(**dados)
-            pp_encontrado.save_produtoPedido()
+            try:
+                pp_encontrado.save_produtoPedido()
+            except ValueError:
+                return erroSalavarPP
             return pp_encontrado.json(), 200
-
-        if ProdutoPedidoModel.find_produtoPedido(dados['cod_nota']):
-            return {'mensagem': 'Produto/Pedido com código "{}" já existe.'
-                    .format(dados['cod_nota'])}, 400
-
-        pp = ProdutoPedidoModel(cod_nota, **dados)
-        try:
-            pp.save_produtoPedido()
-        except ValueError:
-            return {'mensagem': 'Erro ao salvar o Produto/Pedido.'}, 500
-        return pp.json(), 201
+        return pPNaoEncontrado
 
     @jwt_required
     def delete(self, cod_nota):
@@ -52,9 +54,9 @@ class ProdutoPedido(Resource):
             try:
                 pp.delete_produtoPedido()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir o Produto/Pedido.'}, 500
-            return {'mensagem': 'Produto/Pedido excluído.'}
-        return {'mensagem': 'Produto/Pedido não encontrado.'}, 404
+                return erroExcluirPP
+            return pPExcluido
+        return pPNaoEncontrado
 
 
 class ProdutoPedidoCadastro(Resource):
@@ -63,17 +65,15 @@ class ProdutoPedidoCadastro(Resource):
         dados = argumentos.parse_args()
 
         if not PedidoModel.find_pedido(dados['cod_pedido']):
-            return {'mensagem': 'Pedido com código "{}" não existe.'
-                    .format(dados['cod_pedido'])}, 400
+            return pedidoNaoEncontrado
 
         if not ProdutoModel.find_produto(dados['id_produto']):
-            return {'mensagem': 'Produto com id "{}" não existe.'
-                    .format(dados['id_produto'])}, 400
+            return produtoNaoEncontrado
 
         pp = ProdutoPedidoModel(**dados)
 
         try:
             pp.save_produtoPedido()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o fornecedor.'}, 500
+            return erroSalavarPP
         return pp.json(), 200

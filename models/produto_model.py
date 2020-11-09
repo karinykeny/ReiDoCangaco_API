@@ -26,6 +26,9 @@ class ProdutoModel(db.Model):
         self.cod_categoria = cod_categoria
         self.cod_fornecedor = cod_fornecedor
 
+    def getCodProduto(self):
+        return self.cod_produto
+
     def json(self):
         return {
             'id_produto': self.id_produto,
@@ -71,8 +74,9 @@ class ProdutoModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_produto(self, cod_produto, nome_produto, valor_produto, ativo,
-                       cod_categoria, cod_fornecedor):
+    def update_produto(self, id_produto, cod_produto, nome_produto,
+                       valor_produto, ativo, cod_categoria, cod_fornecedor):
+        self.id_produto = id_produto
         self.cod_produto = cod_produto
         self.nome_produto = nome_produto
         self.valor_produto = valor_produto

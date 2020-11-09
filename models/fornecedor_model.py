@@ -5,7 +5,7 @@ class FornecedorModel(db.Model):
     __tablename__ = 'fornecedor'
 
     cod_fornecedor = db.Column(db.Integer, primary_key=True)
-    cnpj_cpf = db.Column(db.String(18), nullable=False)
+    cnpj_cpf = db.Column(db.String(18), unique=True, nullable=False)
     nome_fantasia = db.Column(db.String(150), nullable=False)
     razao_social = db.Column(db.String(150), nullable=False)
     ativo = db.Column(db.String(3), nullable=False)
@@ -45,9 +45,12 @@ class FornecedorModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_fornecedor(self, cnpj_cpf, nome_fantasia, ativo):
+    def update_fornecedor(self, cod_fornecedor, cnpj_cpf, nome_fantasia,
+                          razao_social, ativo):
+        self.cod_fornecedor = cod_fornecedor
         self.cnpj_cpf = cnpj_cpf
         self.nome_fantasia = nome_fantasia
+        self.razao_social = razao_social
         self.ativo = ativo
 
     def delete_fornecedor(self):

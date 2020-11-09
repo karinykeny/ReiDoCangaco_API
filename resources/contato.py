@@ -1,6 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.contato_model import ContatoModel
 from models.fornecedor_model import FornecedorModel
+from resources.mensagem import contatoNaoEncontrado, contatoJaExiste
+from resources.mensagem import erroSalvarContato, erroExcluirContato
+from resources.mensagem import contatoExcluido, fornecedorNaoEncontrado
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
@@ -30,7 +33,7 @@ class Contato(Resource):
         contato = ContatoModel.find_contato(cod_contato)
         if contato:
             return contato.json()
-        return {'mensagem': 'Contato não encontrado.'}, 404
+        return contatoNaoEncontrado
 
     @jwt_required
     def put(self, cod_contato):
@@ -43,14 +46,13 @@ class Contato(Resource):
             return contato_encontrado.json(), 200
 
         if ContatoModel.find_contato(dados['cod_contato']):
-            return {'mensagem': 'Contato com código "{}" já existe.'
-                    .format(dados['cod_contato'])}, 400
+            return contatoJaExiste(dados['cod_contato'])
 
         contato = ContatoModel(cod_contato, **dados)
         try:
             contato.save_contato()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o fornecedor.'}, 500
+            return erroSalvarContato
         return contato.json(), 201
 
     @jwt_required
@@ -60,9 +62,9 @@ class Contato(Resource):
             try:
                 contato.save_contato()
             except ValueError:
-                return {'mensagem': 'Erro ao excluir o contato.'}, 500
-            return {'mensagem': 'Contato excluído.'}
-        return {'mensagem': 'Contato não encontrado.'}, 404
+                return erroExcluirContato
+            return contatoExcluido
+        return contatoNaoEncontrado
 
 
 class ContatoCadastro(Resource):
@@ -71,13 +73,12 @@ class ContatoCadastro(Resource):
         dados = argumentos.parse_args()
 
         if not FornecedorModel.find_fornecedor(dados['cod_fornecedor']):
-            return {'mensagem': 'Fornecedor com código "{}" não existe.'
-                    .format(dados['cod_fornecedor'])}, 400
+            return fornecedorNaoEncontrado
 
         contato = ContatoModel(**dados)
 
         try:
             contato.save_contato()
         except ValueError:
-            return {'mensagem': 'Erro ao salvar o contato.'}, 500
+            return erroSalvarContato
         return contato.json(), 200

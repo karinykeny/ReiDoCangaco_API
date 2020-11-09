@@ -13,6 +13,9 @@ class FormaPagamentoModel(db.Model):
         self.tipo_formaPagamento = tipo_formaPagamento
         self.descricao_formaPagamento = descricao_formaPagamento
 
+    def getTipoFormaPagamento(self):
+        return self.tipo_formaPagamento
+
     def json(self):
         return {
             'cod_formaPgameno': self.cod_formaPgameno,
@@ -33,14 +36,14 @@ class FormaPagamentoModel(db.Model):
         formaPgameno = cls.query.filter_by(
             tipo_formaPagamento=tipo_formaPagamento).first()
         if formaPgameno:
-            return formaPgameno
+            return tipo_formaPagamento
         return None
 
     def save_formaPagamento(self):
         db.session.add(self)
         db.session.commit()
 
-    def update_formaPagamento(self, tipo_formaPagamento,
+    def update_formaPagamento(self, cod_formaPgameno, tipo_formaPagamento,
                               descricao_formaPagamento):
         self.tipo_formaPagamento = tipo_formaPagamento
         self.descricao_formaPagamento = descricao_formaPagamento

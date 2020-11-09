@@ -29,21 +29,18 @@ class Categoria(Resource):
     def put(self, cod_categoria):
         dados = argumentos.parse_args()
 
-        categoria_encontrada = CategoriaModel.find_categoria(cod_categoria)
-        if categoria_encontrada:
-            categoria_encontrada.update_categoria(**dados)
-            categoria_encontrada.save_categoria()
-            return categoria_encontrada.json(), 200
-
         if CategoriaModel.find_categoria_nome(dados['nome_categoria']):
             return categoriaJaExiste(dados['nome_categoria'])
 
-        categoria = CategoriaModel(cod_categoria, **dados)
-        try:
-            categoria.save_categoria()
-        except ValueError:
-            return erroSalvarCategoria
-        return categoria.json(), 201
+        categoria_encontrada = CategoriaModel.find_categoria(cod_categoria)
+        if categoria_encontrada:
+            categoria_encontrada.update_categoria(cod_categoria, **dados)
+            try:
+                categoria_encontrada.save_categoria()
+            except ValueError:
+                return erroSalvarCategoria
+            return categoria_encontrada.json(), 200
+        return categoriaNaoEncontrada
 
     @jwt_required
     def delete(self, cod_categoria):
