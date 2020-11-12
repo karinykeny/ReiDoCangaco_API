@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { AuthenticationService } from './services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,21 +9,14 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class AppComponent {
   title = 'Rei do Cangaço';
-  name: any;
-  login: string;
-  senha: string;
 
   constructor(
-    private route: ActivatedRoute,
-  ) {}
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.name = params['name'];
-    });
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {
+    if (!this.authenticationService.currentUserValue) {
+      this.router.navigate(['/login']);
+    }
   }
-
-  getHome(): void {
-
-  }
+  ngOnInit() { }
 }

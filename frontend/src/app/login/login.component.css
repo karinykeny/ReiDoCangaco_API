@@ -28,7 +28,7 @@ html {
     width: 170px;
     top: -75px;
     border-radius: 50%;
-    background: #080808;
+    background: #242323;
     padding: 10px;
     text-align: center;
 }
@@ -43,7 +43,7 @@ html {
 }
 .login_btn {
     width: 100%;
-    background: #dd5a0e !important;
+    background: #c0392b !important;
     color: white !important;
 }
 .login_btn:focus {
@@ -63,4 +63,9 @@ html {
 .input_pass:focus {
     box-shadow: none !important;
     outline: 0px !important;
+}
+
+.container {
+    background: #242323;
+    max-width: 1500px;
 }

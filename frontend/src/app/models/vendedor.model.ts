@@ -1,10 +1,7 @@
 export class Vendedor {
-    codVendedor: number;
+    cod_vendedor: number;
     ativo: boolean;
-
-    constructor(
-      public nomeVendedor: string,
-      public login: string,
-      public senha: string
-    ) { }
+    nome_vendedor: string;
+    login: string;
+    senha: string;
   }
