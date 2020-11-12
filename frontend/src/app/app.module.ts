@@ -13,13 +13,17 @@ import { AuthenticationService } from './services/authentication.service';
 import { AlertService } from './services/alert.service';
 import { JwtInterceptor } from './helpers/jwt.interceptor';
 import { ErrorInterceptor } from './helpers/error.interceptor';
+import { VendedorCadastroComponent } from './pages/vendedor-cadastro/vendedor-cadastro.component';
+import { VendedorListComponent } from './pages/vendedor-list/vendedor-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    AlertaComponent
+    AlertaComponent,
+    VendedorCadastroComponent,
+    VendedorListComponent
   ],
   imports: [
     BrowserModule,
