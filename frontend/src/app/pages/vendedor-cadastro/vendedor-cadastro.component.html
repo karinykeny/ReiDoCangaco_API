@@ -1,8 +1,6 @@
-{% extends 'home.html' %}
-{% block content %}
 <h1>Cadastro de Vendedor</h1>
 <br>
-<form>
+<form [formGroup]="formVendedor" (ngSubmit)="onSubmit()">
     <div class="form-group">
         <label for="inputName">Nome</label>
         <input type="text" class="form-control" id="inputName" placeholder="Nome do vendedor">
@@ -29,5 +27,4 @@
     
     <br>
     <button type="submit" class="btn btn-danger">Cadastrar</button>
-  </form>
-{% endblock %}
+</form>

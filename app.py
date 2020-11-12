@@ -1,6 +1,7 @@
 from flask_jwt_extended import JWTManager
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify
 from flask_restful import Api
+from flask_cors import CORS
 from resources.produto import Produtos, Produto, ProdutoCadastro
 from resources.fornecedor import Fornecedores, Fornecedor, FornecedorCadastro
 from resources.categoria import Categorias, Categoria, CategoriaCadastro
@@ -16,32 +17,13 @@ from blacklist import blacklist
 mysql = 'mysql+pymysql://root:@localhost:3307/reicangaco'
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'DontTellAnyone'
 app.config['JWT_BLACKLIST_ENEBLED'] = True
 api = Api(app)
 jwt = JWTManager(app)
-
-
-@app.route('/')
-def login_page():
-    return render_template('login.html')
-
-
-@app.route('/home')
-def home_page():
-    return render_template('home.html')
-
-
-@app.route('/usuarios')
-def vendedor_list():
-    return render_template('listaDeVendedores.html')
-
-
-@app.route('/cadastro')
-def vendedor_cadastro_page():
-    return render_template('vendedorCadastro.html')
 
 
 @app.before_first_request
