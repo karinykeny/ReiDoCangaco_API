@@ -15,6 +15,14 @@ import { JwtInterceptor } from './helpers/jwt.interceptor';
 import { ErrorInterceptor } from './helpers/error.interceptor';
 import { VendedorCadastroComponent } from './pages/vendedor-cadastro/vendedor-cadastro.component';
 import { VendedorListComponent } from './pages/vendedor-list/vendedor-list.component';
+import { VendaComponent } from './pages/venda/venda.component';
+import { PedidosComponent } from './pages/pedidos/pedidos.component';
+import { FornecedorCadastroComponent } from './pages/fornecedor-cadastro/fornecedor-cadastro.component';
+import { FornecedorListComponent } from './pages/fornecedor-list/fornecedor-list.component';
+import { FormaPagamentoCadastroComponent } from './pages/forma-pagamento-cadastro/forma-pagamento-cadastro.component';
+import { FormaPagamentoListComponent } from './pages/forma-pagamento-list/forma-pagamento-list.component';
+import { CategoriaCadastroComponent } from './pages/categoria-cadastro/categoria-cadastro.component';
+import { CategoriaListComponent } from './pages/categoria-list/categoria-list.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +31,15 @@ import { VendedorListComponent } from './pages/vendedor-list/vendedor-list.compo
     HomeComponent,
     AlertaComponent,
     VendedorCadastroComponent,
-    VendedorListComponent
+    VendedorListComponent,
+    VendaComponent,
+    PedidosComponent,
+    FornecedorCadastroComponent,
+    FornecedorListComponent,
+    FormaPagamentoCadastroComponent,
+    FormaPagamentoListComponent,
+    CategoriaCadastroComponent,
+    CategoriaListComponent
   ],
   imports: [
     BrowserModule,

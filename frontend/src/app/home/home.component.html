@@ -5,63 +5,82 @@
 <div id="noty-holder"></div>
 <div id="wrapper">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <a class="navbar-brand" href="">
+            <img src="../../assets/img/Login-ReidoCangaço.png" width="60%" height="100%" alt="LOGO">
+        </a> 
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="https://bryanrojasq.wordpress.com">
-                <img src="static/img/logo-mini.png" width="60%" height="100%" alt="LOGO">
-            </a>
+            </button>  
         </div>
         <ul class="nav navbar-right top-nav">
             <li><a href="#" data-placement="bottom" data-toggle="tooltip" href="#" 
-                data-original-title="Stats" (click)="logout()"><i class="fa fa-fw fa-power-off"></i> Logout</a>
+                data-original-title="Stats" (click)="logout()">
+                <span class="glyphicon glyphicon-off"></span>
+                &nbsp;&nbsp;Logout</a>
             </li>            
         </ul>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
                 <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-pencil fa-fw"></i>  VENDA<i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                    <a data-toggle="collapse" data-target="#submenu-1">
+                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;VENDA</a>
+                        
                     <ul id="submenu-1" class="collapse">
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> VENDER</a></li>
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> PEDIDOS</a></li>
+                        <li><a routerLink="/venda" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;VENDA</a></li>
+                        <li><a routerLink="/pedidos" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;PEDIDOS</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-2"><i class="fa fa-fw fa-user-plus"></i>  VENDEDOR<i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                    <a data-toggle="collapse" data-target="#submenu-2">
+                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;VENDEDOR</a>
                     <ul id="submenu-2" class="collapse">
-                        <li><a href=""><i class="fa fa-angle-double-right"></i> CADASTRO</a></li>
-                        <li><a href=""><i class="fa fa-angle-double-right"></i> LISTA</a></li>
+                        <li><a routerLink="/vendedor-lista" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
+                        <li><a routerLink="/vendedor-lista" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-3"><i class="fa fa-book fa-fw"></i>  FORNECEDOR<i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                    <a data-toggle="collapse" data-target="#submenu-3">
+                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;FORNECEDOR</a>
                     <ul id="submenu-3" class="collapse">
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> CADASTRO</a></li>
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> LISTA</a></li>
+                        <li><a routerLink="/fornecedor-cadastro" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
+                        <li><a routerLink="/fornecedor-lista" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-4"><i class="fa fa-usd"></i>  FORMA PAGAMENTO<i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                    <a data-toggle="collapse" data-target="#submenu-4">
+                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;FORMA DE PAGAMENTO</a>
                     <ul id="submenu-4" class="collapse">
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> CADASTRO</a></li>
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> LISTA</a></li>
+                        <li><a routerLink="/forma-pagamento-cadastro" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
+                        <li><a routerLink="forma-pagamento-lista" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" data-toggle="collapse" data-target="#submenu-5"><i class="fa fa-cog fa-fw"></i>  CATEGORA PRODUTO<i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                    <a data-toggle="collapse" data-target="#submenu-5">
+                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;CATEGORA PRODUTO</a>
                     <ul id="submenu-5" class="collapse">
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> CADASTRO</a></li>
-                        <li><a href="#"><i class="fa fa-angle-double-right"></i> LISTA</a></li>
+                        <li><a routerLink="categoria-cadastro" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
+                        <li><a routerLink="categoria-lista" routerLinkActive="active-link">
+                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
+        
     </nav>
     <div id="page-wrapper">
-
+        <router-outlet></router-outlet>
     </div>
 </div>

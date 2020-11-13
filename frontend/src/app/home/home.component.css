@@ -14,6 +14,9 @@
     padding: 0;
     background-color: #fff;
     align-items: center;
+    margin-top: 60px;
+    padding-left: 20px !important;
+    padding-right: 30px !important;
 }
 
 @media(min-width:768px) {
