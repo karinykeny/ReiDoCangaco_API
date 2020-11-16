@@ -1,5 +1,4 @@
 export class Categoria {
     cod_categoria: number;
-
-    constructor(public nome_categoria: string) {}
+    nome_categoria: string;
 }
