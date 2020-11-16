@@ -1,1 +1,188 @@
-<p>forma-pagamento-list works!</p>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // Activate tooltip
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        // Select/Deselect checkboxes
+        var checkbox = $('table tbody input[type="checkbox"]');
+        $("#selectAll").click(function(){
+            if(this.checked){
+                checkbox.each(function(){
+                    this.checked = true;                        
+                });
+            } else{
+                checkbox.each(function(){
+                    this.checked = false;                        
+                });
+            } 
+        });
+        checkbox.click(function(){
+            if(!this.checked){
+                $("#selectAll").prop("checked", false);
+            }
+        });
+    });
+</script>
+<div class="container">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2><b>Gerenciar Forma de Pagamento</b></h2>
+                    </div>
+                    <div class="col-xs-3">
+                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
+                        aria-describedby="basic-addon1">
+                    </div>                    
+                    <div class="col-xs-3">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal">
+                            <span class="glyphicon glyphicon-plus"></span> 
+                            <span>&nbsp;&nbsp;Nova Forma de Pagamento</span></a>						
+                    </div>
+                </div>
+            </div>
+            <app-alerta></app-alerta>
+            <div>
+                <table id="myTable" class="table table-striped table-hover" *ngIf="formasPagamento.length">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                            <tr *ngFor="let fp of formasPagamento | paginate: { itemsPerPage: 6, currentPage: paginaAtual }; let i = index">
+                                <td>{{ fp.cod_formaPgameno }}</td>
+                                <td>{{ fp.tipo_formaPagamento }}</td>
+                                <td>{{ fp.descricao_formaPagamento }}</td>
+                                <td>
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getEditModal(fp)">
+                                        <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getDeleteModal(fp)">
+                                        <span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+                <div class="not-fp" *ngIf="!formasPagamento.length">
+                    <hr>
+                    <span style=" font-size: 100px; margin-top: 30px;" class="glyphicon glyphicon-remove-circle"></span>
+                    <br><p>Não existem formas de pagamentos cadastradas</p>
+                </div>
+            </div>
+            <div *ngIf="formasPagamento.length">
+                <hr>
+                <pagination-controls class="paginacao" (pageChange)="paginaAtual = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+            </div>
+        </div>
+    </div>        
+</div>
+<!-- Add Modal HTML -->
+<div id="addModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="form" [formGroup]="formFP" (ngSubmit)="saveFormasPagamento()">
+                <div class="modal-header">						
+                    <h4 class="modal-title">Nova Forma de Pagamento</h4>
+                    <button id="closeAddModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
+                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.tipo_formaPagamento.errors }"/>
+                        <div *ngIf="submitted && ffp.tipo_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="ffp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                        </div>
+                    </div>					
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
+                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.nome_categoria.errors }"/>
+                        <div *ngIf="submitted && ffp.descricao_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="ffp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                        </div>
+                    </div>	
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal" (click)="clean()">Cancelar</button>
+                    <button type="submit" [disabled]="loading" class="btn btn-modal">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Salvar
+                    </button>                    
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Edit Modal HTML -->
+<div #editModal id="editModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form [formGroup]="formFP" (ngSubmit)="editFormasPagamento()">
+                <div class="modal-header">						
+                    <h4 class="modal-title">Editar categoria </h4>
+                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Código da forma de pagamento</label>
+                        <input type="text" name="cod_categoria" class="form-control" value="{{ fpEdit.cod_formaPgameno }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
+                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.tipo_formaPagamento.errors }"/>
+                        <div *ngIf="submitted && ffp.tipo_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="ffp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                        </div>
+                    </div>					
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
+                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.nome_categoria.errors }"/>
+                        <div *ngIf="submitted && ffp.descricao_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="ffp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Cancelar" (click)="clean()">
+                    <button type="submit" [disabled]="loading" class="btn btn-modal">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Salvar
+                    </button>                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal HTML -->
+<div id="deleteEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">						
+                    <h4 class="modal-title">Excluir forma de pagamento</h4>
+                    <button id="closeDelete" type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <p>Tem certeza de que deseja excluir está forma de pagamento?</p>
+                    <p class="text-warning"><small>Essa ação não pode ser desfeita.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-modal" value="Excluir" (click)="deleteFormasPagamento()">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

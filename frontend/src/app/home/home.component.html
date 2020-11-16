@@ -5,9 +5,6 @@
 <div id="noty-holder"></div>
 <div id="wrapper">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <a class="navbar-brand" href="">
-            <img src="../../assets/img/Login-ReidoCangaço.png" width="60%" height="100%" alt="LOGO">
-        </a> 
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                 <span class="sr-only">Toggle navigation</span>
@@ -17,7 +14,8 @@
             </button>  
         </div>
         <ul class="nav navbar-right top-nav">
-            <li><a href="#" data-placement="bottom" data-toggle="tooltip" href="#" 
+            <li>
+                <a href="#" data-placement="bottom" data-toggle="tooltip" href="#" 
                 data-original-title="Stats" (click)="logout()">
                 <span class="glyphicon glyphicon-off"></span>
                 &nbsp;&nbsp;Logout</a>
@@ -25,6 +23,12 @@
         </ul>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
+                <li>
+                    <a class="nav navbar-left top-nav" routerLink="/" routerLinkActive="active-link" 
+        data-placement="bottom" data-toggle="tooltip" data-original-title="Stats">
+            <img src="../../assets/img/Login-ReidoCangaço.png" alt="LOGO">
+        </a>
+                </li>
                 <li>
                     <a data-toggle="collapse" data-target="#submenu-1">
                         <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;VENDA</a>
@@ -40,7 +44,7 @@
                     <a data-toggle="collapse" data-target="#submenu-2">
                         <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;VENDEDOR</a>
                     <ul id="submenu-2" class="collapse">
-                        <li><a routerLink="/vendedor-lista" routerLinkActive="active-link">
+                        <li><a routerLink="/vendedor-cadastro" routerLinkActive="active-link">
                             <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
                         <li><a routerLink="/vendedor-lista" routerLinkActive="active-link">
                             <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
@@ -57,28 +61,15 @@
                     </ul>
                 </li>
                 <li>
-                    <a data-toggle="collapse" data-target="#submenu-4">
-                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;FORMA DE PAGAMENTO</a>
-                    <ul id="submenu-4" class="collapse">
-                        <li><a routerLink="/forma-pagamento-cadastro" routerLinkActive="active-link">
-                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
-                        <li><a routerLink="forma-pagamento-lista" routerLinkActive="active-link">
-                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
-                    </ul>
+                    <a data-toggle="collapse" data-target="#submenu-4" routerLink="forma-pagamento-lista" routerLinkActive="active-link">
+                        <span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;FORMA DE PAGAMENTO</a>
                 </li>
                 <li>
-                    <a data-toggle="collapse" data-target="#submenu-5">
-                        <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;&nbsp;CATEGORA PRODUTO</a>
-                    <ul id="submenu-5" class="collapse">
-                        <li><a routerLink="categoria-cadastro" routerLinkActive="active-link">
-                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;CADASTRO</a></li>
-                        <li><a routerLink="categoria-lista" routerLinkActive="active-link">
-                            <span class="glyphicon glyphicon-record"></span>&nbsp;&nbsp;LISTA</a></li>
-                    </ul>
+                    <a data-toggle="collapse" data-target="#submenu-5" routerLink="categoria-lista" routerLinkActive="active-link">
+                        <span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;CATEGORA PRODUTO</a>
                 </li>
             </ul>
         </div>
-        
     </nav>
     <div id="page-wrapper">
         <router-outlet></router-outlet>

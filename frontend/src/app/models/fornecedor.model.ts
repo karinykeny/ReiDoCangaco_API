@@ -1,10 +1,10 @@
+import { Contato } from './contato.model';
+
 export class Fornecedor {
     cod_fornecedor: number;
-
-    constructor(
-        public cnpj_cpf: string,
-        public nome_fantasia: string,
-        public razao_social: string,
-        public ativo: string 
-        ) {}
+    cnpj_cpf: string;
+    nome_fantasia: string;
+    razao_social: string;
+    ativo: string;
+    contatos: Array<Contato>;
 }

@@ -1,6 +1,5 @@
+import { HomeBodyComponent } from './pages/home-body/home-body.component';
 import { CategoriaListComponent } from './pages/categoria-list/categoria-list.component';
-import { CategoriaCadastroComponent } from './pages/categoria-cadastro/categoria-cadastro.component';
-import { FormaPagamentoCadastroComponent } from './pages/forma-pagamento-cadastro/forma-pagamento-cadastro.component';
 import { FornecedorListComponent } from './pages/fornecedor-list/fornecedor-list.component';
 import { FornecedorCadastroComponent } from './pages/fornecedor-cadastro/fornecedor-cadastro.component';
 import { PedidosComponent } from './pages/pedidos/pedidos.component';
@@ -19,6 +18,11 @@ const routes: Routes = [
   component: HomeComponent, 
   canActivate: [AuthGuard],
   children: [
+    {
+      path: '',
+      component: HomeBodyComponent,
+      canActivate: [AuthGuard]
+    },
     {
       path: 'venda',
       component: VendaComponent,
@@ -50,18 +54,8 @@ const routes: Routes = [
       canActivate: [AuthGuard]
     },
     {
-      path: 'forma-pagamento-cadastro',
-      component: FormaPagamentoCadastroComponent,
-      canActivate: [AuthGuard]
-    },
-    {
       path: 'forma-pagamento-lista',
       component: FormaPagamentoListComponent,
-      canActivate: [AuthGuard]
-    },
-    {
-      path: 'categoria-cadastro',
-      component: CategoriaCadastroComponent,
       canActivate: [AuthGuard]
     },
     {

@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {API_URL} from '../env';
 import { Vendedor } from '../models/vendedor.model';
-import { Login } from '../models/login.model';
 
 @Injectable({ providedIn: 'root' })
 export class VendedorService {
@@ -11,7 +10,10 @@ export class VendedorService {
   }
 
   getAll() {
-    return this.http.get<Login[]>(`${API_URL}/usuarios`);
+    return this.http.get<any>(`${API_URL}/usuarios`)
+    .toPromise()
+    .then(res => <Vendedor[]>res.data)
+    .then(data => {return data;});
   }
 
   getById(id: number) {
@@ -19,7 +21,7 @@ export class VendedorService {
   }
 
   putVendedor(vendedor: Vendedor) {
-    return this.http.put(`${API_URL}/usuarios/${vendedor.cod_vendedor}`, vendedor)
+    return this.http.put<Vendedor>(`${API_URL}/usuarios/${vendedor.cod_vendedor}`, vendedor);
   }
 
   deleteById(id: number) {
