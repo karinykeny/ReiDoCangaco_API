@@ -19,7 +19,6 @@ import { VendaComponent } from './pages/venda/venda.component';
 import { PedidosComponent } from './pages/pedidos/pedidos.component';
 import { FornecedorCadastroComponent } from './pages/fornecedor-cadastro/fornecedor-cadastro.component';
 import { FornecedorListComponent } from './pages/fornecedor-list/fornecedor-list.component';
-import { FormaPagamentoCadastroComponent } from './pages/forma-pagamento-cadastro/forma-pagamento-cadastro.component';
 import { FormaPagamentoListComponent } from './pages/forma-pagamento-list/forma-pagamento-list.component';
 import { CategoriaListComponent } from './pages/categoria-list/categoria-list.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -59,7 +58,6 @@ import { FornecedorService } from './services/fornecedor.service';
     PedidosComponent,
     FornecedorCadastroComponent,
     FornecedorListComponent,
-    FormaPagamentoCadastroComponent,
     FormaPagamentoListComponent,
     CategoriaListComponent,
     HomeBodyComponent,

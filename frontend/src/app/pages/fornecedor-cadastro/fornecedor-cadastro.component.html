@@ -1,1 +1,342 @@
-<p>fornecedor-cadastro works!</p>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // Activate tooltip
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        // Select/Deselect checkboxes
+        var checkbox = $('table tbody input[type="checkbox"]');
+        $("#selectAll").click(function(){
+            if(this.checked){
+                checkbox.each(function(){
+                    this.checked = true;                        
+                });
+            } else{
+                checkbox.each(function(){
+                    this.checked = false;                        
+                });
+            } 
+        });
+        checkbox.click(function(){
+            if(!this.checked){
+                $("#selectAll").prop("checked", false);
+            }
+        });
+    });
+</script>
+<div class="row">
+    <legend><b>&nbsp;&nbsp;Cadastro de Fornecedor</b></legend>
+</div>
+<br>
+<div class="fornecedor">
+    <form [formGroup]="formFornecedor" (ngSubmit)="onSubmitFornecedor()">  
+        <div class="form-row">
+            <div class="form-group">
+                <div class="dropdown">
+                    <button class="btn btn-nova dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      CNPJ
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item">CNPJ</a>
+                      <a class="dropdown-item">CPF</a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <input type="text" name="cnpj_cpf" class="form-control" formControlName="cnpj_cpf"
+                [ngClass]="{'is-invalid': submitted && f.cnpj_cpf.errors}"/>
+                <div *ngIf="submitted && f.cnpj_cpf.errors" class="invalid-feedback">
+                    <div *ngIf="f.cnpj_cpf.errors.required">CNPJ ou CPF inválido</div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Nome fantazia</label>
+            <input type="text" name="nome_fantasia" class="form-control" formControlName="nome_fantasia"
+            [ngClass]="{'is-invalid': submitted && f.nome_fantasia.errors}"/>
+            <div *ngIf="submitted && f.nome_fantasia.errors" class="invalid-feedback">
+                <div *ngIf="f.nome_fantasia.errors.required">Nome inválido</div>
+            </div>
+        </div>   
+        <div class="form-group">
+            <label>Razão social</label>
+            <input type="text" name="razao_social" class="form-control" formControlName="razao_social"
+            [ngClass]="{'is-invalid': submitted && f.razao_social.errors}"/>
+            <div *ngIf="submitted && f.razao_social.errors" class="invalid-feedback">
+                <div *ngIf="f.razao_social.errors.required">Nome inválido</div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Status</label>
+                <div class="dropdown" style="width: 150px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Ativo&nbsp;&nbsp;&nbsp;&nbsp;
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item">Ativo&nbsp;&nbsp;</a>
+                      <a class="dropdown-item">Inativo&nbsp;&nbsp;</a>
+                    </div>
+                </div>
+            </div>
+            <button type="reset" style="height: 35px; margin-top: 25px;" class="btn btn-nova" (click)="clean()">Limpar dados</button>
+        </div>
+        
+        
+        <div class="container">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-xs-5"></div>
+                            <div class="col-xs-2">
+                                <button type="submit" [disabled]="loading" class="btn btn-cangaco" style="width: 150px;">
+                                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                    Salvar
+                                </button>
+                            </div>                 
+                            <div class="col-xs-3">
+                                <a href="#addModal" class="btn btn-cangaco" data-toggle="modal">
+                                    <span class="glyphicon glyphicon-plus"></span> 
+                                    <span>&nbsp;&nbsp;Adicionar Contato</span></a>						
+                            </div>
+                        </div>
+                    </div>
+                    <app-alerta></app-alerta>
+                    <div>
+                        <table id="myTable" class="table table-striped table-hover" *ngIf="contatos.length">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                </tr>                
+                            </thead>
+                            <tbody>
+                                    <tr *ngFor="let contato of contatos | paginate: { itemsPerPage: 3, currentPage: paginaAtual }; let i = index">
+                                        <td>{{ contato.cod_contato }}</td>
+                                        <td>{{ contato.nome }}</td>
+                                        <td>
+                                            <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(contato)">
+                                                <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(contato)">
+                                                <span class="glyphicon glyphicon-trash"></span></a>
+                                            <!-- <a href="#viewModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(contato)">
+                                                <span class="glyphicon glyphicon-eye-open"></span></a> -->
+                                            
+                                        </td>
+                                    </tr>
+                            </tbody>
+                        </table>
+                        <div class="not-fp" *ngIf="!contatos.length">
+                            <hr>
+                            <span style=" font-size: 100px; margin-top: 30px;" class="glyphicon glyphicon-remove-circle"></span>
+                            <br><p>Não existem contatos cadastrados</p>
+                        </div>
+                    </div>
+                    <div *ngIf="contatos.length">
+                        <hr>
+                        <pagination-controls class="paginacao" (pageChange)="paginaAtual = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+                    </div>
+                </div>
+            </div>        
+        </div>  
+    </form>
+</div>
+
+<div class="contato">
+    
+
+<!-- Add Modal HTML -->
+<div id="addModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="form" [formGroup]="formContato" (ngSubmit)="saveContato()">
+                <div class="modal-header">						
+                    <h4 class="modal-title">Novo contato</h4>
+                    <button id="closeAddModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" name="nome" class="form-control" formControlName="nome"
+                        [ngClass]="{ 'is-invalid': submitted && c.nome.errors }"/>
+                        <div *ngIf="submitted && c.nome.errors" class="invalid-feedback">
+                            <div *ngIf="c.nome.errors.required">Nome inválido</div>
+                        </div>
+                    </div>					
+                    <div class="form-group">
+                        <label>logradouro</label>
+                        <input type="text" name="logradouro" class="form-control" formControlName="logradouro"
+                        [ngClass]="{ 'is-invalid': submitted && c.logradouro.errors }"/>
+                        <div *ngIf="submitted && c.logradouro.errors" class="invalid-feedback">
+                            <div *ngIf="c.logradouro.errors.required">Logradouro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Número</label>
+                        <input type="text" name="numero" class="form-control" formControlName="numero"
+                        [ngClass]="{ 'is-invalid': submitted && c.numero.errors }"/>
+                        <div *ngIf="submitted && c.numero.errors" class="invalid-feedback">
+                            <div *ngIf="c.numero.errors.required">Número inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Bairro</label>
+                        <input type="text" name="bairro" class="form-control" formControlName="bairro"
+                        [ngClass]="{ 'is-invalid': submitted && c.bairro.errors }"/>
+                        <div *ngIf="submitted && c.bairro.errors" class="invalid-feedback">
+                            <div *ngIf="c.bairro.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cidade</label>
+                        <input type="text" name="cidade" class="form-control" formControlName="cidade"
+                        [ngClass]="{ 'is-invalid': submitted && c.cidade.errors }"/>
+                        <div *ngIf="submitted && c.cidade.errors" class="invalid-feedback">
+                            <div *ngIf="c.cidade.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input type="text" name="estado" class="form-control" formControlName="estado"
+                        [ngClass]="{ 'is-invalid': submitted && c.estado.errors }"/>
+                        <div *ngIf="submitted && c.estado.errors" class="invalid-feedback">
+                            <div *ngIf="c.estado.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>CEP</label>
+                        <input type="text" name="cep" class="form-control" formControlName="cep"
+                        [ngClass]="{ 'is-invalid': submitted && c.cep.errors }"/>
+                        <div *ngIf="submitted && c.cep.errors" class="invalid-feedback">
+                            <div *ngIf="c.cep.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Complemento</label>
+                        <input type="text" name="complemento" class="form-control" formControlName="complemento"
+                        [ngClass]="{ 'is-invalid': submitted && c.complemento.errors }"/>
+                        <div *ngIf="submitted && c.complemento.errors" class="invalid-feedback">
+                            <div *ngIf="c.complemento.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone Fixo</label>
+                        <input type="text" name="telefone_fixo" class="form-control" formControlName="telefone_fixo"
+                        [ngClass]="{ 'is-invalid': submitted && c.telefone_fixo.errors }"/>
+                        <div *ngIf="submitted && c.telefone_fixo.errors" class="invalid-feedback">
+                            <div *ngIf="c.telefone_fixo.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Celular</label>
+                        <input type="text" name="celular" class="form-control" formControlName="celular"
+                        [ngClass]="{ 'is-invalid': submitted && c.celular.errors }"/>
+                        <div *ngIf="submitted && c.celular.errors" class="invalid-feedback">
+                            <div *ngIf="c.celular.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="text" name="email" class="form-control" formControlName="email"
+                        [ngClass]="{ 'is-invalid': submitted && c.email.errors }"/>
+                        <div *ngIf="submitted && c.email.errors" class="invalid-feedback">
+                            <div *ngIf="c.email.errors.required">Bairro inválido</div>
+                        </div>
+                    </div>	
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal" (click)="clean()">Cancelar</button>
+                    <button type="submit" [disabled]="loading" class="btn btn-modal">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Salvar
+                    </button>                    
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Ver dados Modal HTML -->
+<div #viewModal id="viewModal" class="modal fade">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form>
+            <div class="modal-header">						
+                <h4 class="modal-title">Contato</h4>
+                <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Código</label>
+                    <input type="text" name="cod_contato" class="form-control" disabled
+                    value="{{ contatoEdit.cod_contato }}"/>
+                </div>					
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" name="nome" class="form-control" disabled
+                    value="{{ contatoEdit.nome }}"/>
+                </div>					
+                <div class="form-group">
+                    <label>logradouro</label>
+                    <input type="text" name="logradouro" class="form-control" disabled
+                    value="{{ contatoEdit.logradouro }}"/>
+                </div>
+                <div class="form-group">
+                    <label>Número</label>
+                    <input type="text" name="numero" class="form-control" disabled
+                    value="{{ contatoEdit.numero }}"/>
+                </div>
+                <div class="form-group">
+                    <label>Bairro</label>
+                    <input type="text" name="bairro" class="form-control" disabled
+                    value="{{ contatoEdit.bairro }}"/>
+                </div>
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" name="cidade" class="form-control" disabled
+                    value="{{ contatoEdit.cidade }}"/>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <input type="text" name="estado" class="form-control"  disabled
+                    value="{{ contatoEdit.estado }}"/>
+                </div>
+                <div class="form-group">
+                    <label>CEP</label>
+                    <input type="text" name="cep" class="form-control" disabled
+                    value="{{ contatoEdit.cep }}"/>
+                </div>
+                <div class="form-group">
+                    <label>Complemento</label>
+                    <input type="text" name="complemento" class="form-control" 
+                    value="{{ contatoEdit.complemento }}" disabled/>
+                </div>
+                <div class="form-group">
+                    <label>Telefone Fixo</label>
+                    <input type="text" name="telefone_fixo" class="form-control"
+                    value="{{ contatoEdit.telefone_fixo }}" disabled/>
+                </div>
+                <div class="form-group">
+                    <label>Celular</label>
+                    <input type="text" name="celular" class="form-control" disabled
+                    value="{{ contatoEdit.celular }}"/>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="text" name="email" class="form-control" disabled
+                    value="{{ contatoEdit.email }}" />
+                </div>	
+            </div>
+            <div class="modal-footer">
+                <input type="reset" class="btn btn-default" data-dismiss="modal" value="Cancelar" (click)="clean()">                
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+

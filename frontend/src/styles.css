@@ -10,3 +10,20 @@ body {
 input:active {
     border-color:red;
 }
+
+.btn-cangaco {
+    background: #F44336;
+    border-color: #F44336;
+    color: #fff;
+}
+
+.btn-cangaco:focus {
+    color: #fff;
+    border-color: #F44336;
+    box-shadow: 0 0 2px  #F44336;
+}
+
+.btn-default:focus {
+    border-color: #dfc532;
+    box-shadow: 0 0 2px  #dfc532;
+}

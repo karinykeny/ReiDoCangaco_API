@@ -7,6 +7,8 @@ from resources.mensagem import contatoExcluido, fornecedorNaoEncontrado
 from flask_jwt_extended import jwt_required
 
 argumentos = reqparse.RequestParser()
+argumentos.add_argument('nome', type=str,
+                        required=True, help="Campo obrigatório.")
 argumentos.add_argument('logradouro', type=str,
                         required=True, help="Campo obrigatório.")
 argumentos.add_argument('numero',  type=str,

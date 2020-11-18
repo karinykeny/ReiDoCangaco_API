@@ -3,6 +3,7 @@ from sql_alchemy import db
 
 class ContatoModel(db.Model):
     cod_contato = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(150), nullable=False)
     logradouro = db.Column(db.String(150), nullable=False)
     numero = db.Column(db.String(10), nullable=False)
     bairro = db.Column(db.String(50), nullable=False)
@@ -16,9 +17,10 @@ class ContatoModel(db.Model):
     cod_fornecedor = db.Column(
         db.Integer, db.ForeignKey('fornecedor.cod_fornecedor'))
 
-    def __init__(self, logradouro, numero, bairro, cidade,
+    def __init__(self, nome, logradouro, numero, bairro, cidade,
                  estado, cep, complemento, telefone_fixo, celular, email,
                  cod_fornecedor):
+        self.nome = nome
         self.logradouro = logradouro
         self.numero = numero
         self.bairro = bairro
@@ -34,6 +36,7 @@ class ContatoModel(db.Model):
     def json(self):
         return {
             'cod_contato': self.cod_contato,
+            'nome': self.nome,
             'logradouro': self.logradouro,
             'numero': self.numero,
             'bairro': self.bairro,
@@ -58,9 +61,10 @@ class ContatoModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_contato(self, logradouro, numero, bairro, cidade, estado,
+    def update_contato(self, nome, logradouro, numero, bairro, cidade, estado,
                        cep, complemento, telefone_fixo, celular, email,
                        cod_fornecedor):
+        self.nome = nome
         self.logradouro = logradouro
         self.numero = numero
         self.bairro = bairro
