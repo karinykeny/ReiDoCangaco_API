@@ -23,7 +23,7 @@ class FornecedorModel(db.Model):
             'cnpj_cpf': self.cnpj_cpf,
             'nome_fantasia': self.nome_fantasia,
             'razao_social': self.razao_social,
-            'Ativo': self.ativo,
+            'ativo': self.ativo,
             'contatos': [contato.json() for contato in self.contato]
         }
 

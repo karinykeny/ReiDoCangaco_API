@@ -12,7 +12,7 @@ import { first } from 'rxjs/operators';
 })
 export class FornecedorListComponent implements OnInit {
 
-  fornecedores: Fornecedor[];
+  fornecedores = new Array<Fornecedor>();
   fornecedorEdit: Fornecedor = new Fornecedor();
   formFornecedor: FormGroup;
   loading = false;
@@ -59,32 +59,6 @@ export class FornecedorListComponent implements OnInit {
   }
 
   get ffp() { return this.formFornecedor.controls; }
-
-  saveFormasPagamento(): void {
-    this.submitted = true;
-    this.alertService.clear();
-    if (this.formFornecedor.invalid) { 
-      return; 
-    }
-    this.loading = true;
-
-    const newFornecedor = new Fornecedor();
-    newFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf
-    newFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia
-    newFornecedor.razao_social = this.formFornecedor.value.razao_social
-    newFornecedor.ativo = this.formFornecedor.value.ativo
-
-    this.fornecedorService.createFornecedor(newFornecedor)
-    .pipe(first()).subscribe(result => {
-      this.alertService.success("Fornecedor criada com sucesso");
-      this.getFornecedores();
-      document.getElementById('closeAddModal').click();
-    }, error => {
-      this.alertService.error(error.error.mensagem);
-      document.getElementById('closeAddModal').click();
-      this.loading = false;
-    })
-  }
 
 
   editFornecedor(): void {

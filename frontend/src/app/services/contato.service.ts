@@ -12,6 +12,10 @@ export class ContatoService {
 
   constructor(private http: HttpClient) {}
 
+  getAll() {
+    return this.http.get<any>(`${API_URL}/contatos`);
+  }
+
   getById(id: number) {
     return this.http.get(`${API_URL}/contato/${id}`);
   }

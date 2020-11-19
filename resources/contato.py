@@ -29,6 +29,12 @@ argumentos.add_argument('cod_fornecedor', type=int,
                         required=True, help="Campo obrigatório.")
 
 
+class Contatos(Resource):
+    def get(self):
+        order = [contato.json() for contato in ContatoModel.query.all()]
+        return {'contatos': order}
+
+
 class Contato(Resource):
 
     def get(self, cod_contato):

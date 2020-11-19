@@ -1,6 +1,4 @@
 import { Fornecedor } from './../models/fornecedor.model';
-import { FormaPagamento } from './../models/formaPagamento.model';
-import { Categoria } from './../models/categoria.model';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {API_URL} from '../env';
@@ -19,7 +17,7 @@ export class FornecedorService {
   }
 
   putFornecedor(fornecedor: Fornecedor) {
-    return this.http.put<Categoria>(
+    return this.http.put<Fornecedor>(
       `${API_URL}/fornecedores/${fornecedor.cod_fornecedor}`, { 
         cnpj_cpf: fornecedor.cnpj_cpf,
         nome_fantasia: fornecedor.nome_fantasia,
@@ -32,7 +30,7 @@ export class FornecedorService {
   }
 
   createFornecedor(fornecedor: Fornecedor) {
-    return this.http.post<FormaPagamento>(
+    return this.http.post<Fornecedor>(
         `${API_URL}/fornecedores/cadastro`,{ 
             cnpj_cpf: fornecedor.cnpj_cpf,
             nome_fantasia: fornecedor.nome_fantasia,

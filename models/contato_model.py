@@ -2,6 +2,8 @@ from sql_alchemy import db
 
 
 class ContatoModel(db.Model):
+    __tablename__ = 'contato'
+
     cod_contato = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(150), nullable=False)
     logradouro = db.Column(db.String(150), nullable=False)
