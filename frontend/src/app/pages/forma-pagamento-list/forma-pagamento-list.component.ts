@@ -12,7 +12,8 @@ import { FormaPagamentoService } from 'src/app/services/formaPagamento.service';
 })
 export class FormaPagamentoListComponent implements OnInit {
 
-  formasPagamento: FormaPagamento[];
+  formasPagamento = new Array<FormaPagamento>();
+  formasPagamento_db = new Array<FormaPagamento>();
   fpEdit: FormaPagamento = new FormaPagamento();
   formFP: FormGroup;
   loading = false;
@@ -40,6 +41,7 @@ export class FormaPagamentoListComponent implements OnInit {
   getFormasPagamento(): void {
     this.formaPagamentoService.getAll().subscribe(
       result => {
+        this.formasPagamento_db = result.formasPagamento;
         this.formasPagamento = result.formasPagamento;
     });
   }
@@ -71,12 +73,12 @@ export class FormaPagamentoListComponent implements OnInit {
     newFP.descricao_formaPagamento = this.formFP.value.descricao_formaPagamento
 
     this.formaPagamentoService.createFormaPagamento(newFP)
-    .pipe(first()).subscribe(result => {
+    .subscribe(() => {
       this.alertService.success("Forma de pagamento criada com sucesso");
       this.getFormasPagamento();
       document.getElementById('closeAddModal').click();
-    }, error => {
-      this.alertService.error(error.error.mensagem);
+    },error => {
+      this.alertService.error(error);
       document.getElementById('closeAddModal').click();
       this.loading = false;
     })
@@ -118,8 +120,8 @@ export class FormaPagamentoListComponent implements OnInit {
       this.getFormasPagamento();
       document.getElementById('closeDelete').click();
 
-    }, error => {
-      this.alertService.error(error.error.mensagem)
+    }, (error: Error) => {
+      this.alertService.error(error.message)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })
@@ -130,4 +132,13 @@ export class FormaPagamentoListComponent implements OnInit {
     this.loading = false;
   }
 
+  filtrar(value: any) {
+    if(!value) {
+      this.formasPagamento = this.formasPagamento_db;
+   } else {
+     this.formasPagamento = this.formasPagamento_db.filter( fp => 
+      fp.tipo_formaPagamento.trim().toLowerCase().includes(value.trim().toLowerCase())
+     );
+   }
+  }
 }

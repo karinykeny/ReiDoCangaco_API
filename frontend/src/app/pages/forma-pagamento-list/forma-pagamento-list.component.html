@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -26,7 +26,7 @@
             }
         });
     });
-</script>
+</script> -->
 <div class="container">
     <div class="table-responsive">
         <div class="table-wrapper">
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-xs-3">
                         <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
-                        aria-describedby="basic-addon1">
+                        aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
                     </div>                    
                     <div class="col-xs-3">
                         <a href="#addModal" class="btn btn-nova" data-toggle="modal">
@@ -93,21 +93,21 @@
                     <h4 class="modal-title">Nova Forma de Pagamento</h4>
                     <button id="closeAddModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
-                <div class="modal-body">					
+                <div class="modal-body">				
                     <div class="form-group">
                         <label>Tipo</label>
                         <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
-                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.tipo_formaPagamento.errors }"/>
-                        <div *ngIf="submitted && ffp.tipo_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
+                        <div *ngIf="submitted && fp.tipo_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="fp.tipo_formaPagamento.errors.required">Tipo inválido</div>
                         </div>
                     </div>					
                     <div class="form-group">
                         <label>Descrição</label>
                         <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
-                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.nome_categoria.errors }"/>
-                        <div *ngIf="submitted && ffp.descricao_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.descricao_formaPagamento.errors }"/>
+                        <div *ngIf="submitted && fp.descricao_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="fp.descricao_formaPagamento.errors.required">Descrição inválida</div>
                         </div>
                     </div>	
                 </div>
@@ -131,7 +131,7 @@
                     <h4 class="modal-title">Editar categoria </h4>
                     <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
-                <div class="modal-body">					
+                <div class="modal-body">			
                     <div class="form-group">
                         <label>Código da forma de pagamento</label>
                         <input type="text" name="cod_categoria" class="form-control" value="{{ fpEdit.cod_formaPgameno }}" disabled>
@@ -139,17 +139,17 @@
                     <div class="form-group">
                         <label>Tipo</label>
                         <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
-                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.tipo_formaPagamento.errors }"/>
-                        <div *ngIf="submitted && ffp.tipo_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
+                        <div *ngIf="submitted && fp.tipo_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="fp.tipo_formaPagamento.errors.required">Tipo inválido</div>
                         </div>
                     </div>					
                     <div class="form-group">
                         <label>Descrição</label>
                         <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
-                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && ffp.nome_categoria.errors }"/>
-                        <div *ngIf="submitted && ffp.descricao_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.nome_categoria.errors }"/>
+                        <div *ngIf="submitted && fp.descricao_formaPagamento.errors" class="invalid-feedback">
+                            <div *ngIf="fp.descricao_formaPagamento.errors.required">Descrição inválida</div>
                         </div>
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                     <h4 class="modal-title">Excluir forma de pagamento</h4>
                     <button id="closeDelete" type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
-                <div class="modal-body">					
+                <div class="modal-body">			
                     <p>Tem certeza de que deseja excluir está forma de pagamento?</p>
                     <p class="text-warning"><small>Essa ação não pode ser desfeita.</small></p>
                 </div>

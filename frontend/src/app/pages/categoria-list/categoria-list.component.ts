@@ -13,7 +13,8 @@ import { first } from 'rxjs/operators';
 })
 export class CategoriaListComponent implements OnInit {
 
-  categorias: Categoria[];
+  categorias = new Array<Categoria>();
+  categorias_db = new Array<Categoria>();
   categoriaEdit: Categoria = new Categoria();
   formCategoria: FormGroup;
   loading = false;
@@ -29,6 +30,7 @@ export class CategoriaListComponent implements OnInit {
   ngOnInit(): void {
     this.createForm(new Categoria());
     this.getCategorias();
+    this.categorias = this.categorias_db;
   }
 
   createForm(categoria: Categoria) {
@@ -40,7 +42,8 @@ export class CategoriaListComponent implements OnInit {
   getCategorias(): void {
     this.categoriaService.getAll().subscribe(
       result => {
-        this.categorias = result.categorias;
+        this.categorias_db = result.categorias;
+        this.categorias = this.categorias_db;
     });
   }
 
@@ -128,4 +131,14 @@ export class CategoriaListComponent implements OnInit {
     this.loading = false;
   }
 
+  filtrar(value: any) {
+    if(!value) {
+      this.categorias = this.categorias_db;
+   } else {
+     this.categorias = this.categorias_db.filter( categoria => 
+      categoria.nome_categoria.trim().toLowerCase().includes(value.trim().toLowerCase())
+     );
+   }
+  }
+  
 }

@@ -1,5 +1,5 @@
 from flask_jwt_extended import JWTManager
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_cors import CORS
 from resources.produto import Produtos, Produto, ProdutoCadastro
