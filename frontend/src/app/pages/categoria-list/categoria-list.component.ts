@@ -1,10 +1,10 @@
-
 import { Categoria } from './../../models/categoria.model';
 import { Component, OnInit } from '@angular/core';
 import { CategoriaService } from 'src/app/services/categoria.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-categoria-list',
@@ -35,7 +35,7 @@ export class CategoriaListComponent implements OnInit {
 
   createForm(categoria: Categoria) {
     this.formCategoria = this.formBuilder.group({
-      nome_categoria: [categoria.nome_categoria, this.categoriaEdit.cod_categoria ? Validators.required : Validators.nullValidator ]
+      nome_categoria: [categoria.nome_categoria, Validators.nullValidator ]
     })
   }
 
@@ -78,7 +78,7 @@ export class CategoriaListComponent implements OnInit {
       this.getCategorias();
       document.getElementById('closeAddModal').click();
     }, error => {
-      this.alertService.error(error.error.mensagem);
+      this.alertService.error(error);
       document.getElementById('closeAddModal').click();
       this.loading = false;
     })
@@ -98,12 +98,12 @@ export class CategoriaListComponent implements OnInit {
     infCategoria.nome_categoria = this.formCategoria.value.nome_categoria
 
     this.categoriaService.putCategoria(infCategoria)
-    .pipe(first()).subscribe( reult => {
+    .pipe(first()).subscribe( () => {
       this.alertService.success(`Categoria com código ${infCategoria.cod_categoria} foi alterada`);
       this.getCategorias();
       document.getElementById('closeModal').click();
     }, error => {
-      this.alertService.error(error.error.mensagem);
+      this.alertService.error(error);
       document.getElementById('closeModal').click();
       this.loading = false;
     })
@@ -120,7 +120,7 @@ export class CategoriaListComponent implements OnInit {
       document.getElementById('closeDelete').click();
 
     }, error => {
-      this.alertService.error(error.error.mensagem)
+      this.alertService.error(error)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })
@@ -130,6 +130,16 @@ export class CategoriaListComponent implements OnInit {
     this.submitted = false;
     this.loading = false;
   }
+
+  desabilitaBtn(): void {
+    this.submitted = true;
+    this.loading = true;
+  }
+
+  habilitarBtn(): void {
+    this.loading = false;
+  }
+
 
   filtrar(value: any) {
     if(!value) {

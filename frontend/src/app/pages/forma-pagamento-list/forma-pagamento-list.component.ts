@@ -58,7 +58,7 @@ export class FormaPagamentoListComponent implements OnInit {
     this.fpEdit = fp;
   }
 
-  get ffp() { return this.formFP.controls; }
+  get fp() { return this.formFP.controls; }
 
   saveFormasPagamento(): void {
     this.submitted = true;

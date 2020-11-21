@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.formLogin.value)
       .pipe(first())
       .subscribe(
-        data => {
+        () => {
           return this.router.navigate([this.returnUrl]);
         },
         error => {
@@ -61,4 +61,5 @@ export class LoginComponent implements OnInit {
           this.loading = false;
       });
   }
+  
 }
