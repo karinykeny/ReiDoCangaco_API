@@ -33,8 +33,8 @@ export class FormaPagamentoListComponent implements OnInit {
 
   createForm(fp: FormaPagamento) {
     this.formFP = this.formBuilder.group({
-      tipo_formaPagamento: [fp.tipo_formaPagamento, Validators.nullValidator ],
-      descricao_formaPagamento: [fp.descricao_formaPagamento, Validators.nullValidator ]
+      tipo_formaPagamento: [fp.tipo_formaPagamento, [Validators.required, Validators.minLength(3), Validators.maxLength(50)] ],
+      descricao_formaPagamento: [fp.descricao_formaPagamento, [Validators.required, Validators.minLength(3), Validators.maxLength(50)] ]
     })
   }
 
@@ -46,15 +46,7 @@ export class FormaPagamentoListComponent implements OnInit {
     });
   }
 
-  getEditModal(fp: FormaPagamento): void {
-    this.fpEdit = fp;
-  }
-
-  getAddModal(): void {
-    this.fpEdit = null;
-  }
-
-  getDeleteModal(fp: FormaPagamento): void {
+  getInfModal(fp: FormaPagamento): void {
     this.fpEdit = fp;
   }
 
@@ -74,7 +66,7 @@ export class FormaPagamentoListComponent implements OnInit {
 
     this.formaPagamentoService.createFormaPagamento(newFP)
     .subscribe(() => {
-      this.alertService.success("Forma de pagamento criada com sucesso");
+      this.alertService.success(`Forma de pagamento ${newFP.tipo_formaPagamento} criada com sucesso`);
       this.getFormasPagamento();
       document.getElementById('closeAddModal').click();
     },error => {
@@ -104,7 +96,7 @@ export class FormaPagamentoListComponent implements OnInit {
       this.getFormasPagamento();
       document.getElementById('closeModal').click();
     }, error => {
-      this.alertService.error(error.mensagem);
+      this.alertService.error(error);
       document.getElementById('closeModal').click();
       this.loading = false;
     })
@@ -120,8 +112,8 @@ export class FormaPagamentoListComponent implements OnInit {
       this.getFormasPagamento();
       document.getElementById('closeDelete').click();
 
-    }, (error: Error) => {
-      this.alertService.error(error.message)
+    }, error => {
+      this.alertService.error(error)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })
@@ -140,5 +132,14 @@ export class FormaPagamentoListComponent implements OnInit {
       fp.tipo_formaPagamento.trim().toLowerCase().includes(value.trim().toLowerCase())
      );
    }
+  }
+
+  resetForm(): void {
+    this.formFP.reset();
+  }
+
+  getForm(): void {
+    this.formFP.value.tipo_formaPagamento = this.fpEdit.tipo_formaPagamento;
+    this.formFP.value.descricao_formaPagamento = this.fpEdit.descricao_formaPagamento;
   }
 }

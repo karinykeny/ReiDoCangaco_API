@@ -2,6 +2,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="angular.min.js"></script>
+<script src='ngMask.min.js'></script>
 <script>
     $(document).ready(function(){
         // Activate tooltip
@@ -31,44 +33,43 @@
     <legend><b>&nbsp;&nbsp;Cadastro de Fornecedor</b></legend>
 </div>
 <br>
-<app-alerta></app-alerta>
+<app-alerta class="fornecedor"></app-alerta>
 <div class="fornecedor" *ngIf="!fornecedor">
     <form [formGroup]="formFornecedor" (ngSubmit)="onSubmitFornecedor()">  
         <div class="form-row">
-            <div class="form-group">
-                  <select style="height: 35px;" class="form-control" id="cnpj_cpf">
-                    <option value="cnpj">CNPJ</option>
-                    <option value="cpf">CPF</option>
-                  </select>
-            </div>
             <div class="form-group col-md-4">
-                <input type="text" name="cnpj_cpf" class="form-control" formControlName="cnpj_cpf"
-                [ngClass]="{'is-invalid': submitted && f.cnpj_cpf.errors}"/>
+                <label>CNPJ ou CPF</label>
+                <input type="text" name="cnpj_cpf" class="form-control" formControlName="cnpj_cpf" size="18" minlength="11" maxlength="18" placeholder="Digite o CNPJ ou CPF"
+                [mask]="getCpfCnpjMask()" [ngClass]="{'is-invalid': submitted && f.cnpj_cpf.errors}"/>
                 <div *ngIf="submitted && f.cnpj_cpf.errors" class="invalid-feedback">
                     <div *ngIf="f.cnpj_cpf.errors.required">CNPJ ou CPF inválido</div>
+                    <div *ngIf="f.cnpj_cpf.errors.minlength">O CPF/CNPJ deve ter no minimo 11 caracteres</div>
                 </div>
             </div>
         </div>
-        <br>
         <div class="form-group">
             <label>Nome fantazia</label>
-            <input type="text" name="nome_fantasia" class="form-control" formControlName="nome_fantasia"
-            [ngClass]="{'is-invalid': submitted && f.nome_fantasia.errors}"/>
+            <input type="text" name="nome_fantasia" class="form-control" formControlName="nome_fantasia" minlength="3" maxlength="150" 
+            placeholder="Nome fantazia" [ngClass]="{'is-invalid': submitted && f.nome_fantasia.errors}"/>
             <div *ngIf="submitted && f.nome_fantasia.errors" class="invalid-feedback">
                 <div *ngIf="f.nome_fantasia.errors.required">Nome inválido</div>
+                <div *ngIf="f.nome_fantasia.errors.minlength">O nome fantazia deve ter no minimo 3 caracteres</div>
+                <div *ngIf="f.nome_fantasia.errors.maxlength">O nome fantazia deve ter no máximo 150 caracteres</div>
             </div>
         </div>   
         <div class="form-group">
             <label>Razão social</label>
-            <input type="text" name="razao_social" class="form-control" formControlName="razao_social"
-            [ngClass]="{'is-invalid': submitted && f.razao_social.errors}"/>
+            <input type="text" name="razao_social" class="form-control" formControlName="razao_social" minlength="3" maxlength="150" 
+            placeholder="Razão social" [ngClass]="{'is-invalid': submitted && f.razao_social.errors}"/>
             <div *ngIf="submitted && f.razao_social.errors" class="invalid-feedback">
                 <div *ngIf="f.razao_social.errors.required">Nome inválido</div>
+                <div *ngIf="f.razao_social.errors.minlength">A razão social deve ter no minimo 3 caracteres</div>
+                <div *ngIf="f.razao_social.errors.maxlength">A razão social deve ter no máximo 150 caracteres</div>
             </div>
         </div>
         <div class="form-group">
-            <label>Ativo</label>
-            <select style="height: 35px; width: 150px;" formControlName="ativo" class="form-control" id="cnpj_cpf">
+            <label for="ativo">Ativo</label>
+            <select style="height: 35px; width: 150px;" formControlName="ativo" class="form-control" name="ativo" id="ativo">
                 <option value="Sim">Sim</option>
                 <option value="Não">Não</option>
             </select>
@@ -86,10 +87,10 @@
     <form>
         <tr>
             <th><label>CPF/CNPJ: </label></th>
-            <td>{{ fornecedor.cnpj_cpf }}</td>
+            <td>{{ fornecedor.cnpj_cpf | mask: getCpfCnpjMask() }}</td>
         </tr>
         <tr>
-            <th><label>Nome fantazia: </label></th>
+            <th><label>Nome fantazia:&nbsp;&nbsp;</label></th>
             <td>{{ fornecedor.nome_fantasia }}</td>
         </tr>
         <tr>
@@ -147,107 +148,125 @@
     </div>        
 </div>  
 
-<div class="contato">
-    
-
 <!-- Add Modal HTML -->
-<div id="addModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="form" [formGroup]="formContato" (ngSubmit)="onSubmitContato()">
+<div id="addModal" class="modal fade bd-example-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content modal-lg">
+            <form [formGroup]="formContato" (ngSubmit)="onSubmitContato()">
                 <div class="modal-header">						
-                    <h4 class="modal-title">Novo contato</h4>
+                    <h4 class="modal-title">Cadastro de contato</h4>
                     <button id="closeAddModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
                 <div class="modal-body">					
                     <div class="form-group">
-                        <label>Nome</label>
-                        <input type="text" name="nome" class="form-control" formControlName="nome"
-                        [ngClass]="{ 'is-invalid': submitted && c.nome.errors }"/>
+                        <label>Nome *</label>
+                        <input type="text" name="nome" class="form-control" formControlName="nome" placeholder="Nome do contato" required
+                        minlength="3" maxlength="150" [ngClass]="{ 'is-invalid': submitted && c.nome.errors }"/>
                         <div *ngIf="submitted && c.nome.errors" class="invalid-feedback">
                             <div *ngIf="c.nome.errors.required">Nome inválido</div>
+                            <div *ngIf="c.nome.errors.minlength">O nome deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="c.nome.errors.maxlength">O nome deve ter no máximo 150 caracteres</div>
                         </div>
                     </div>					
                     <div class="form-group">
-                        <label>logradouro</label>
-                        <input type="text" name="logradouro" class="form-control" formControlName="logradouro"
-                        [ngClass]="{ 'is-invalid': submitted && c.logradouro.errors }"/>
+                        <label>logradouro *</label>
+                        <input type="text" name="logradouro" class="form-control" formControlName="logradouro" placeholder="Rua, Av...."
+                        minlength="3" maxlength="150" required [ngClass]="{ 'is-invalid': submitted && c.logradouro.errors }"/>
                         <div *ngIf="submitted && c.logradouro.errors" class="invalid-feedback">
                             <div *ngIf="c.logradouro.errors.required">Logradouro inválido</div>
+                            <div *ngIf="c.logradouro.errors.minlength">O logradouro deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="c.logradouro.errors.maxlength">O logradouro deve ter no máximo 150 caracteres</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Número</label>
-                        <input type="text" name="numero" class="form-control" formControlName="numero"
-                        [ngClass]="{ 'is-invalid': submitted && c.numero.errors }"/>
-                        <div *ngIf="submitted && c.numero.errors" class="invalid-feedback">
-                            <div *ngIf="c.numero.errors.required">Número inválido</div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Número *</label>
+                            <input type="number" name="numero" class="form-control" formControlName="numero" placeholder="nº" minlength="1" maxlength="10"
+                            required [ngClass]="{ 'is-invalid': submitted && c.numero.errors }"/>
+                            <div *ngIf="submitted && c.numero.errors" class="invalid-feedback">
+                                <div *ngIf="c.numero.errors.required">Número inválido</div>
+                                <div *ngIf="c.numero.errors.minlength">Número inválido</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label>Bairro *</label>
+                            <input type="text" name="bairro" class="form-control" formControlName="bairro" placeholder="Bairro"
+                            minlength="3" maxlength="50" required [ngClass]="{ 'is-invalid': submitted && c.bairro.errors }"/>
+                            <div *ngIf="submitted && c.bairro.errors" class="invalid-feedback">
+                                <div *ngIf="c.bairro.errors.required">Bairro inválido</div>
+                                <div *ngIf="c.bairro.errors.minlength">O bairro deve ter no minimo 3 caracteres</div>
+                                <div *ngIf="c.bairro.errors.maxlength">O bairro deve ter no máximo 50 caracteres</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label>Cidade *</label>
+                            <input type="text" name="cidade" class="form-control" formControlName="cidade" placeholder="Cidade"
+                            minlength="3" maxlength="50" required [ngClass]="{ 'is-invalid': submitted && c.cidade.errors }"/>
+                            <div *ngIf="submitted && c.cidade.errors" class="invalid-feedback">
+                                <div *ngIf="c.cidade.errors.required">Bairro inválido</div>
+                                <div *ngIf="c.cidade.errors.minlength">O bairro deve ter no minimo 3 caracteres</div>
+                                <div *ngIf="c.cidade.errors.maxlength">O bairro deve ter no máximo 50 caracteres</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Bairro</label>
-                        <input type="text" name="bairro" class="form-control" formControlName="bairro"
-                        [ngClass]="{ 'is-invalid': submitted && c.bairro.errors }"/>
-                        <div *ngIf="submitted && c.bairro.errors" class="invalid-feedback">
-                            <div *ngIf="c.bairro.errors.required">Bairro inválido</div>
+                    <div class="form-row">                       
+                        <div class="form-group col-md-2">
+                            <label for="estado">Estado *</label>
+                            <select style="height: 35px;" name="estado" class="form-control" formControlName="estado" id="estado"
+                            minlength="2" maxlength="2" required [ngClass]="{ 'is-invalid': submitted && c.estado.errors }">
+                                <option *ngFor="let estado of estados" value="{{ estado }}">{{ estado }}</option>
+                            </select>
+                            <div *ngIf="submitted && c.estado.errors" class="invalid-feedback">
+                                <div *ngIf="c.estado.errors.required">Bairro inválido</div>
+                                <div *ngIf="c.estado.errors.minlength">Bairro inválido</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>CEP *</label>
+                            <input type="text" name="cep" class="form-control" formControlName="cep" placeholder="00000-000"
+                            minlength="8" [mask]="'00000-000'" required [ngClass]="{ 'is-invalid': submitted && c.cep.errors }"/>
+                            <div *ngIf="submitted && c.cep.errors" class="invalid-feedback">
+                                <div *ngIf="c.cep.errors.required">Bairro inválido</div>
+                                <div *ngIf="c.cidade.errors.minlength">O CEP deve ter 8 dígitos</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-7">
+                            <label>Complemento</label>
+                            <input type="text" name="complemento" class="form-control" formControlName="complemento" placeholder="Complemento"
+                            [ngClass]="{ 'is-invalid': submitted && c.complemento.errors }"/>
+                            <div *ngIf="submitted && c.complemento.errors" class="invalid-feedback">
+                                <div *ngIf="c.complemento.errors">Complemento inválido</div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Telefone Fixo</label>
+                            <input type="text" name="telefone_fixo" class="form-control" formControlName="telefone_fixo" placeholder="(00) 0000-0000"
+                            minlength="10" [mask]="'(00) 0000-0000'" [ngClass]="{ 'is-invalid': submitted && c.telefone_fixo.errors }"/>
+                            <div *ngIf="submitted && c.telefone_fixo.errors" class="invalid-feedback">
+                                <div *ngIf="c.telefone_fixo.errors.nminlength">Telefone inválido</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Celular</label>
+                            <input type="text" name="celular" class="form-control" formControlName="celular" placeholder="(00) 00000-0000"
+                            minlength="11" [mask]="'(00) 00000-0000'" [ngClass]="{ 'is-invalid': submitted && c.celular.errors }"/>
+                            <div *ngIf="submitted && c.celular.errors" class="invalid-feedback">
+                                <div *ngIf="c.celular.errors">Celular inválido</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Cidade</label>
-                        <input type="text" name="cidade" class="form-control" formControlName="cidade"
-                        [ngClass]="{ 'is-invalid': submitted && c.cidade.errors }"/>
-                        <div *ngIf="submitted && c.cidade.errors" class="invalid-feedback">
-                            <div *ngIf="c.cidade.errors.required">Bairro inválido</div>
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            <label>E-mail</label>
+                            <input type="email" name="email" class="form-control" formControlName="email" placeholder="meuemail@meuemail.com.br"
+                            [ngClass]="{ 'is-invalid': submitted && c.email.errors }"/>
+                            <div *ngIf="submitted && c.email.errors" class="invalid-feedback">
+                                <div *ngIf="c.email.errors">E-mail inválido</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <input type="text" name="estado" class="form-control" formControlName="estado"
-                        [ngClass]="{ 'is-invalid': submitted && c.estado.errors }"/>
-                        <div *ngIf="submitted && c.estado.errors" class="invalid-feedback">
-                            <div *ngIf="c.estado.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>CEP</label>
-                        <input type="text" name="cep" class="form-control" formControlName="cep"
-                        [ngClass]="{ 'is-invalid': submitted && c.cep.errors }"/>
-                        <div *ngIf="submitted && c.cep.errors" class="invalid-feedback">
-                            <div *ngIf="c.cep.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Complemento</label>
-                        <input type="text" name="complemento" class="form-control" formControlName="complemento"
-                        [ngClass]="{ 'is-invalid': submitted && c.complemento.errors }"/>
-                        <div *ngIf="submitted && c.complemento.errors" class="invalid-feedback">
-                            <div *ngIf="c.complemento.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone Fixo</label>
-                        <input type="text" name="telefone_fixo" class="form-control" formControlName="telefone_fixo"
-                        [ngClass]="{ 'is-invalid': submitted && c.telefone_fixo.errors }"/>
-                        <div *ngIf="submitted && c.telefone_fixo.errors" class="invalid-feedback">
-                            <div *ngIf="c.telefone_fixo.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Celular</label>
-                        <input type="text" name="celular" class="form-control" formControlName="celular"
-                        [ngClass]="{ 'is-invalid': submitted && c.celular.errors }"/>
-                        <div *ngIf="submitted && c.celular.errors" class="invalid-feedback">
-                            <div *ngIf="c.celular.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>E-mail</label>
-                        <input type="text" name="email" class="form-control" formControlName="email"
-                        [ngClass]="{ 'is-invalid': submitted && c.email.errors }"/>
-                        <div *ngIf="submitted && c.email.errors" class="invalid-feedback">
-                            <div *ngIf="c.email.errors.required">Bairro inválido</div>
-                        </div>
-                    </div>	
+                    </div>                                    	
                 </div>
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-default" data-dismiss="modal" (click)="clean()">Cancelar</button>
@@ -261,9 +280,9 @@
     </div>
 </div>
 <!-- Ver dados Modal HTML -->
-<div #viewModal id="viewModal" class="modal fade">
+<div id="viewModal" class="modal fade">
 <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" style="margin-top: 90px; margin-left: 180px;">
         <form>
             <div class="modal-header">						
                 <h4 class="modal-title">Contato</h4>
@@ -279,7 +298,7 @@
                     <td>{{ contatoEdit.nome }}</td>
                 </tr>
                 <tr>
-                    <th><label>Logradouro: </label></th>
+                    <th><label>Logradouro:&nbsp;&nbsp;</label></th>
                     <td>{{ contatoEdit.logradouro }}</td>
                 </tr>
                 <tr>
@@ -300,7 +319,7 @@
                 </tr>
                 <tr>
                     <th><label>CEP: </label></th>
-                    <td>{{ contatoEdit.cep }}</td>
+                    <td>{{ contatoEdit.cep |  mask: '0000-000' }}</td>
                 </tr>
                 <tr>
                     <th><label>Complemento: </label></th>
@@ -308,11 +327,11 @@
                 </tr>
                 <tr>
                     <th><label>Telefone Fixo: </label></th>
-                    <td>{{ contatoEdit.telefone_fixo }}</td>
+                    <td>{{ contatoEdit.telefone_fixo |  mask: '(00) 0000-0000' }}</td>
                 </tr>
                 <tr>
                     <th><label>Celular: </label></th>
-                    <td>{{ contatoEdit.celular }}</td>
+                    <td>{{ contatoEdit.celular |  mask: '(00) 00000-0000' }}</td>
                 </tr>
                 <tr>
                     <th><label>E-mail: </label></th>
@@ -324,7 +343,6 @@
             </div>
         </form>
     </div>
-</div>
 </div>
 </div>
 

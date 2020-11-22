@@ -191,7 +191,8 @@ table.table .avatar {
 /* Modal styles */
 .modal .modal-dialog {
     max-width: 400px;
-    margin: 140px auto;
+    margin: 10px auto;
+    margin-left: 380px;
     z-index: 1040;
 }
 .modal .modal-header, .modal .modal-body, .modal .modal-footer {

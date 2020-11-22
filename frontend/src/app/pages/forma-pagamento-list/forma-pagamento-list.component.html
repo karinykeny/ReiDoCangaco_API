@@ -1,32 +1,3 @@
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script>
-    $(document).ready(function(){
-        // Activate tooltip
-        $('[data-toggle="tooltip"]').tooltip();
-        
-        // Select/Deselect checkboxes
-        var checkbox = $('table tbody input[type="checkbox"]');
-        $("#selectAll").click(function(){
-            if(this.checked){
-                checkbox.each(function(){
-                    this.checked = true;                        
-                });
-            } else{
-                checkbox.each(function(){
-                    this.checked = false;                        
-                });
-            } 
-        });
-        checkbox.click(function(){
-            if(!this.checked){
-                $("#selectAll").prop("checked", false);
-            }
-        });
-    });
-</script> -->
 <div class="container">
     <div class="table-responsive">
         <div class="table-wrapper">
@@ -40,7 +11,7 @@
                         aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
                     </div>                    
                     <div class="col-xs-3">
-                        <a href="#addModal" class="btn btn-nova" data-toggle="modal">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="resetForm()">
                             <span class="glyphicon glyphicon-plus"></span> 
                             <span>&nbsp;&nbsp;Nova Forma de Pagamento</span></a>						
                     </div>
@@ -63,9 +34,9 @@
                                 <td>{{ fp.tipo_formaPagamento }}</td>
                                 <td>{{ fp.descricao_formaPagamento }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getEditModal(fp)">
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(fp)" (click)="getForm()">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getDeleteModal(fp)">
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(fp)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
                                 </td>
                             </tr>
@@ -96,18 +67,22 @@
                 <div class="modal-body">				
                     <div class="form-group">
                         <label>Tipo</label>
-                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
-                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
+                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento"
+                        required minlength="3" maxlength="50" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
                         <div *ngIf="submitted && fp.tipo_formaPagamento.errors" class="invalid-feedback">
                             <div *ngIf="fp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                            <div *ngIf="fp.tipo_formaPagamento.errors.minlength">O tipo deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="fp.tipo_formaPagamento.errors.maxlength">O tipo deve ter no máximo 50 caracteres</div>
                         </div>
                     </div>					
                     <div class="form-group">
                         <label>Descrição</label>
-                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
-                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.descricao_formaPagamento.errors }"/>
+                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento"
+                        required minlength="3" maxlength="50" [ngClass]="{ 'is-invalid': submitted && fp.descricao_formaPagamento.errors }"/>
                         <div *ngIf="submitted && fp.descricao_formaPagamento.errors" class="invalid-feedback">
                             <div *ngIf="fp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                            <div *ngIf="fp.descricao_formaPagamento.errors.minlength">A descrição deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="fp.descricao_formaPagamento.errors.maxlength">A descrição deve ter no máximo 50 caracteres</div>
                         </div>
                     </div>	
                 </div>
@@ -138,18 +113,22 @@
                     </div>
                     <div class="form-group">
                         <label>Tipo</label>
-                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento" minlength="3"
-                        value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
+                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento"
+                        required minlength="3" maxlength="50" value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
                         <div *ngIf="submitted && fp.tipo_formaPagamento.errors" class="invalid-feedback">
                             <div *ngIf="fp.tipo_formaPagamento.errors.required">Tipo inválido</div>
+                            <div *ngIf="fp.tipo_formaPagamento.errors.minlength">O tipo deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="fp.tipo_formaPagamento.errors.maxlength">O tipo deve ter no máximo 50 caracteres</div>
                         </div>
                     </div>					
                     <div class="form-group">
                         <label>Descrição</label>
-                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento" minlength="3"
-                        value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.nome_categoria.errors }"/>
+                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento"
+                        required minlength="3" maxlength="50" value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.descricao_formaPagamento.errors }"/>
                         <div *ngIf="submitted && fp.descricao_formaPagamento.errors" class="invalid-feedback">
                             <div *ngIf="fp.descricao_formaPagamento.errors.required">Descrição inválida</div>
+                            <div *ngIf="fp.descricao_formaPagamento.errors.minlength">A descrição deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="fp.descricao_formaPagamento.errors.maxlength">A descrição deve ter no máximo 50 caracteres</div>
                         </div>
                     </div>
                 </div>

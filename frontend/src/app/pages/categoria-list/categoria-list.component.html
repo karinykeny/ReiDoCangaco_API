@@ -40,7 +40,7 @@
                         aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
                     </div>                    
                     <div class="col-xs-2">
-                        <a href="#addModal" class="btn btn-nova" data-toggle="modal">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="resetForm()">
                             <span class="glyphicon glyphicon-plus"></span> 
                             <span>&nbsp;&nbsp;Nova categoria</span></a>						
                     </div>
@@ -61,9 +61,9 @@
                                 <td>{{ categoria.cod_categoria }}</td>
                                 <td>{{ categoria.nome_categoria }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getEditModal(categoria)" (click)="desabilitaBtn()">
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(categoria)">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getDeleteModal(categoria)">
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(categoria)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
                                 </td>
                             </tr>
@@ -84,7 +84,7 @@
     </div>        
 </div>
 <!-- Add Modal HTML -->
-<div id="addModal" class="modal fade">
+<div #myModal id="addModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <form [formGroup]="formCategoria" (ngSubmit)="saveCategoria()">
@@ -94,13 +94,15 @@
                 </div>
                 <div class="modal-body">					
                     <div class="modal-body">				
-                        <div class="form-group">
-                            <label>Nome da categoria</label>
-                            <input id="nomeAdd" type="text" name="nome_categoria" class="form-control" formControlName="nome_categoria" minlength="3"
-                            [ngClass]="{ 'is-invalid': submitted && fc.nome_categoria.errors }"/>
+                        <div class="form-group has-feedback">
+                            <label for="nome_categoria">Nome da categoria</label>
+                            <input #myInput type="text" id="nome_categoria" name="nome_categoria" class="form-control" formControlName="nome_categoria"
+                            required minlength="3" maxlength="50" value="" [ngClass]="{ 'is-invalid': submitted && fc.nome_categoria.errors }"/>
                             <div *ngIf="submitted && fc.nome_categoria.errors" class="invalid-feedback">
-                                <div *ngIf="fc.nome_categoria.errors.required">Nome inválido</div>
-                            </div>
+                                <div *ngIf="fc.nome_categoria.errors.required">Nome obrigatório</div>
+                                <div *ngIf="fc.nome_categoria.errors.minlength">O nome deve ter no minimo 3 caracteres</div>
+                                <div *ngIf="fc.nome_categoria.errors.maxlength">O nome deve ter no máximo 50 caracteres</div>
+                            </div>                          
                         </div>	
                     </div>
                 </div>
@@ -116,7 +118,7 @@
     </div>
 </div>
 <!-- Edit Modal HTML -->
-<div #editModal id="editModal" class="modal fade">
+<div id="editModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <form [formGroup]="formCategoria" (ngSubmit)="editCategoria()">
@@ -132,10 +134,12 @@
                         </div>					
                         <div class="form-group">
                             <label>Nome da categoria</label>
-                            <input type="text" name="nome_categoria" class="form-control" formControlName="nome_categoria" (keyup)="habilitarBtn()"
-                            value="{{ categoriaEdit.nome_categoria }}" [ngClass]="{ 'is-invalid': submitted && fc.nome_categoria.errors }"/>
+                            <input type="text" id="nome_categoria" name="nome_categoria" class="form-control" formControlName="nome_categoria"
+                            required minlength="3" maxlength="50" value="{{ categoriaEdit.nome_categoria }}" [ngClass]="{ 'is-invalid': submitted && fc.nome_categoria.errors }"/>
                             <div *ngIf="submitted && fc.nome_categoria.errors" class="invalid-feedback">
-                                <div *ngIf="fc.nome_categoria.errors.required">Nome inválido</div>
+                                <div *ngIf="fc.nome_categoria.errors.required">Nome obrigatório</div>
+                                <div *ngIf="fc.nome_categoria.errors.minlength">O nome deve ter no minimo 3 caracteres</div>
+                                <div *ngIf="fc.nome_categoria.errors.maxlength">O nome deve ter no máximo 50 caracteres</div>
                             </div>
                         </div>	
                     </div>

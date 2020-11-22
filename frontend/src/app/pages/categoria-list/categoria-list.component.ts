@@ -1,5 +1,5 @@
 import { Categoria } from './../../models/categoria.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { CategoriaService } from 'src/app/services/categoria.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -30,12 +30,11 @@ export class CategoriaListComponent implements OnInit {
   ngOnInit(): void {
     this.createForm(new Categoria());
     this.getCategorias();
-    this.categorias = this.categorias_db;
   }
 
   createForm(categoria: Categoria) {
     this.formCategoria = this.formBuilder.group({
-      nome_categoria: [categoria.nome_categoria, Validators.nullValidator ]
+      nome_categoria: [categoria.nome_categoria, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
     })
   }
 
@@ -47,15 +46,7 @@ export class CategoriaListComponent implements OnInit {
     });
   }
 
-  getEditModal(categoria: Categoria): void {
-    this.categoriaEdit = categoria;
-  }
-
-  getAddModal(): void {
-    this.categoriaEdit = null;
-  }
-
-  getDeleteModal(categoria: Categoria): void {
+  getInfModal(categoria: Categoria): void {
     this.categoriaEdit = categoria;
   }
 
@@ -74,7 +65,7 @@ export class CategoriaListComponent implements OnInit {
 
     this.categoriaService.createCategoria(newCategoria)
     .pipe(first()).subscribe(result => {
-      this.alertService.success("Categoria criada com sucesso");
+      this.alertService.success(`Categoria ${newCategoria.nome_categoria} criada com sucesso`);
       this.getCategorias();
       document.getElementById('closeAddModal').click();
     }, error => {
@@ -131,15 +122,6 @@ export class CategoriaListComponent implements OnInit {
     this.loading = false;
   }
 
-  desabilitaBtn(): void {
-    this.submitted = true;
-    this.loading = true;
-  }
-
-  habilitarBtn(): void {
-    this.loading = false;
-  }
-
 
   filtrar(value: any) {
     if(!value) {
@@ -150,5 +132,8 @@ export class CategoriaListComponent implements OnInit {
      );
    }
   }
-  
+
+  resetForm(): void {
+    this.formCategoria.reset();
+  }
 }

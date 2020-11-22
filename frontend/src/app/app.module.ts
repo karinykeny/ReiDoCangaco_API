@@ -27,7 +27,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { FormaPagamentoService } from './services/formaPagamento.service';
 import { HomeBodyComponent } from './pages/home-body/home-body.component';
 import { FornecedorService } from './services/fornecedor.service';
-
+import { NgxMaskModule , IConfig } from 'ngx-mask';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +52,7 @@ import { FornecedorService } from './services/fornecedor.service';
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
-    FormsModule
+    NgxMaskModule.forRoot(),
   ],
   providers: [
     VendedorService,

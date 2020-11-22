@@ -20,9 +20,9 @@ export class FornecedorCadastroComponent implements OnInit {
   contatoEdit: Contato = new Contato();
   loading = false;
   submitted = false;
-  cpf: boolean = true;
+  cpf_cnpj : any;
   public paginaAtual = 1;
-
+  estados: Array<string> = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -38,22 +38,22 @@ export class FornecedorCadastroComponent implements OnInit {
 
   createFormFornacedor(fornecedor: Fornecedor) {
     this.formFornecedor = this.formBuilder.group({
-      cnpj_cpf: [fornecedor.cnpj_cpf, Validators.nullValidator],
-      nome_fantasia: [fornecedor.nome_fantasia, Validators.nullValidator],
-      razao_social: [fornecedor.razao_social, Validators.nullValidator],
-      ativo: [fornecedor.ativo, Validators.nullValidator]
+      cnpj_cpf: [fornecedor.cnpj_cpf, [Validators.required, Validators.minLength(11), Validators.maxLength(18)]],
+      nome_fantasia: [fornecedor.nome_fantasia, [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      razao_social: [fornecedor.razao_social, [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      ativo: [fornecedor.ativo, [Validators.required, Validators.minLength(3), Validators.maxLength(3)]]
     })
   }
 
   createFormContato(contato: Contato) {
     this.formContato = this.formBuilder.group({
-      nome: [contato.nome, Validators.nullValidator],
-      logradouro: [contato.logradouro, Validators.nullValidator],
-      numero: [contato.numero, Validators.nullValidator],
-      bairro: [contato.bairro, Validators.nullValidator],
-      cidade: [contato.cidade, Validators.nullValidator],
-      estado: [contato.estado, Validators.nullValidator],
-      cep: [contato.cep, Validators.nullValidator],
+      nome: [contato.nome, [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      logradouro: [contato.logradouro, [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      numero: [contato.numero, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      bairro: [contato.bairro, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      cidade: [contato.cidade, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      estado: [contato.estado, [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+      cep: [contato.cep, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
       complemento: [contato.complemento],
       telefone_fixo: [contato.telefone_fixo],
       celular: [contato.celular],
@@ -81,7 +81,7 @@ export class FornecedorCadastroComponent implements OnInit {
 
     this.fornecedorService.createFornecedor(newFornecedor)
     .pipe(first()).subscribe(result => {
-      this.alertService.success("Fornecedor criada com sucesso");
+      this.alertService.success(`Fornecedor ${newFornecedor.nome_fantasia} criada com sucesso`);
       this.fornecedor = result;
       document.getElementById('closeAddModal').click();
     }, error => {
@@ -107,7 +107,7 @@ export class FornecedorCadastroComponent implements OnInit {
 
     this.contatoService.createContato(newContato)
     .pipe(first()).subscribe(result => {
-      this.alertService.success("Contato criada com sucesso");
+      this.alertService.success(`Contato ${newContato.nome} criada com sucesso`);
       this.contatoEdit = result;
       this.contatos.push(this.contatoEdit);
       document.getElementById('closeAddModal').click();
@@ -139,4 +139,12 @@ export class FornecedorCadastroComponent implements OnInit {
     this.submitted = false;
     this.loading = false;
   }
+
+  isCPF(): boolean{
+    return this.formFornecedor.value.cnpj_cpf == null ? true : this.formFornecedor.value.cnpj_cpf.length < 12 ? true : false;
+ }
+
+  getCpfCnpjMask(): string{
+    return this.isCPF() ? '000.000.000-009' : '00.000.000/0000-00';
+ }
 }
