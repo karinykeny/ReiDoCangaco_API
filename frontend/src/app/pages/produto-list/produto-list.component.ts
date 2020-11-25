@@ -24,7 +24,9 @@ export class ProdutoListComponent implements OnInit {
   categoria: Categoria;
   fornecedor: Fornecedor;
   formProduto: FormGroup;
-  ativosList = ["Sim","Não"]
+  ativosList = ["Sim","Não"];
+  isAddMode: boolean;
+  id: number;
   loading = false;
   submitted = false;
   public paginaAtual = 1;
@@ -43,6 +45,22 @@ export class ProdutoListComponent implements OnInit {
     this.getFornecedores();
     this.getCategorias();
     this.getProdutos();
+  }
+
+  getIsAddMode(): void {
+    if (this.produtoEdit.id_produto) {
+      this.id = this.produtoEdit.id_produto;
+      this.produtoService.getById(this.id)
+        .pipe(first()).subscribe(x => {
+          this.formProduto.patchValue(x);
+          this.isAddMode = false;
+        });
+    }
+  }
+
+  getAddMode(): void {
+    this.isAddMode = true;
+    this.formProduto.reset();
   }
 
   createForm(produto: Produto) {
@@ -84,16 +102,25 @@ export class ProdutoListComponent implements OnInit {
 
   get p() { return this.formProduto.controls; }
 
-  saveProduto(): void {
+  onSubmit() {
     this.submitted = true;
     this.alertService.clear();
-    if (this.formProduto.invalid) { 
-      return; 
+    if (this.formProduto.invalid) {
+        return;
     }
+
     this.loading = true;
 
+    if (this.isAddMode) {
+        this.saveProduto();
+    } else {
+        this.editProduto();
+    }
+  }
+
+  saveProduto(): void {
     this.produtoService.createProduto(this.formProduto.value)
-    .pipe(first()).subscribe(result => {
+    .pipe(first()).subscribe(() => {
       this.alertService.success(`Produto ${this.formProduto.value.nome_produto} criada com sucesso`);
       this.getProdutos();
       document.getElementById('closeAddModal').click();
@@ -106,15 +133,8 @@ export class ProdutoListComponent implements OnInit {
 
 
   editProduto(): void {
-    this.submitted = true;
-    this.alertService.clear();
-    if (this.formProduto.invalid) { 
-      return; 
-    }
-    this.loading = true; 
-
-    this.produtoService.putProduto(this.formProduto.value, this.produtoEdit.id_produto)
-    .pipe(first()).subscribe( () => {
+    this.produtoService.putProduto(this.formProduto.value, this.id)
+    .pipe(first()).subscribe(() => {
       this.alertService.success(`Produto com código ${this.formProduto.value.cod_produto} foi alterada`);
       this.getProdutos();
       document.getElementById('closeModal').click();
@@ -156,10 +176,6 @@ export class ProdutoListComponent implements OnInit {
       produto.nome_produto.trim().toLowerCase().includes(value.trim().toLowerCase())
      );
    }
-  }
-
-  resetForm(): void {
-    this.formProduto.reset();
   }
 
   getFornecedor(id: number): String {

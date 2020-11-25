@@ -18,8 +18,9 @@ export class FornecedorListComponent implements OnInit {
   formFornecedor: FormGroup;
   loading = false;
   submitted = false;
+  id: number;
   public paginaAtual = 1;
-  public paginaAtualModal = 1;
+  public pagina = 1;
   contatos = this.fornecedorEdit.contatos
 
   constructor(
@@ -32,6 +33,17 @@ export class FornecedorListComponent implements OnInit {
     this.createForm(new Fornecedor());
     this.getFornecedores();
   }
+
+  isAddMode(): void {
+    if (this.fornecedorEdit.cod_fornecedor) {
+      this.id = this.fornecedorEdit.cod_fornecedor;
+      this.fornecedorService.getById(this.id)
+        .pipe(first()).subscribe(x => {
+          this.formFornecedor.patchValue(x);
+        });
+    }
+  }
+
 
   createForm(fornecedor: Fornecedor) {
     this.formFornecedor = this.formBuilder.group({
@@ -50,19 +62,11 @@ export class FornecedorListComponent implements OnInit {
     });
   }
 
-  getEditModal(fornecedor: Fornecedor): void {
+  getInfModal(fornecedor: Fornecedor): void {
     this.fornecedorEdit = fornecedor;
   }
 
-  getAddModal(): void {
-    this.fornecedorEdit = null;
-  }
-
-  getDeleteModal(fornecedor: Fornecedor): void {
-    this.fornecedorEdit = fornecedor;
-  }
-
-  get ffp() { return this.formFornecedor.controls; }
+  get f() { return this.formFornecedor.controls; }
 
 
   editFornecedor(): void {

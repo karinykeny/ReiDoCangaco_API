@@ -40,7 +40,7 @@
                         aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
                     </div>                    
                     <div class="col-xs-2">
-                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="resetForm()">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="getAddMode()">
                             <span class="glyphicon glyphicon-plus"></span> 
                             <span>&nbsp;&nbsp;Novo Produto</span></a>						
                     </div>
@@ -69,7 +69,7 @@
                                 <td>{{ getCategoria(produto.cod_categoria) }}</td>
                                 <td>{{ getFornecedor(produto.cod_fornecedor) }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(produto)">
+                                    <a href="#addModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(produto)" (click)="getIsAddMode()">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                                     <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(produto)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
@@ -92,12 +92,13 @@
     </div>        
 </div>
 <!-- Add Modal HTML -->
-<div #myModal id="addModal" class="modal fade">
+<!-- <div #myModal id="addModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <form [formGroup]="formProduto" (ngSubmit)="saveProduto()">
                 <div class="modal-header">						
-                    <h4 class="modal-title">Novo Produto</h4>
+                    <h4 class="modal-title" *ngIf="isAddMode">Novo Produto</h4>
+                    <h4 class="modal-title" *ngIf="!isAddMode">Editar Produto</h4>
                     <button id="closeAddModal" type="reset" class="close was-validated" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
                 <div class="modal-body">					
@@ -173,14 +174,15 @@
             </form>
         </div>
     </div>
-</div>
-<!-- Edit Modal HTML -->
-<div id="editModal" class="modal fade">
+</div> -->
+
+<div id="addModal" class="modal fade">
     <div class="modal-dialog modal-lg" style="margin: 90px auto;">
         <div class="modal-content modal-lg" style="width: 500px">
-            <form [formGroup]="formProduto" (ngSubmit)="editProduto()">
+            <form [formGroup]="formProduto" (ngSubmit)="onSubmit()">
                 <div class="modal-header">						
-                    <h4 class="modal-title">Editar produto</h4>
+                    <h4 class="modal-title" *ngIf="isAddMode">Novo Produto</h4>
+                    <h4 class="modal-title" *ngIf="!isAddMode">Editar Produto</h4>
                     <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -188,7 +190,7 @@
                         <div class="form-group has-feedback col-md-6">
                             <label for="nome_categoria">Código</label>
                             <input #myInput type="text" id="cod_produto" name="cod_produto" class="form-control" formControlName="cod_produto" placeholder="Código do produto"
-                            required minlength="1" maxlength="50" value="{{ produtoEdit.cod_produto }}" [ngClass]="{ 'is-invalid': submitted && p.cod_produto.errors }"/>
+                            required minlength="1" maxlength="50" [ngClass]="{ 'is-invalid': submitted && p.cod_produto.errors }"/>
                             <div *ngIf="submitted && p.cod_produto.errors" class="invalid-feedback">
                                 <div *ngIf="p.cod_produto.errors.required">Nome obrigatório</div>
                                 <div *ngIf="p.cod_produto.errors.minlength">O código deve ter no minimo 3 caracteres</div>
@@ -199,7 +201,7 @@
                     <div class="form-group has-feedback">
                         <label for="nome_categoria">Nome do produto</label>
                         <input #myInput type="text" id="nome_produto" name="nome_produto" class="form-control" formControlName="nome_produto" placeholder="Nome do produto"
-                        required minlength="3" maxlength="150" value="{{ produtoEdit.nome_produto }}" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
+                        required minlength="3" maxlength="150" value="" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
                         <div *ngIf="submitted && p.nome_produto.errors" class="invalid-feedback">
                             <div *ngIf="p.nome_produto.errors.required">Nome obrigatório</div>
                             <div *ngIf="p.nome_produto.errors.minlength">O nome deve ter no minimo 3 caracteres</div>
@@ -210,7 +212,7 @@
                         <div class="form-group has-feedback col-md-7">
                             <label for="nome_categoria">Valor do produto</label>
                             <input #myInput type="text" id="valor_produto" name="valor_produto" class="form-control" formControlName="valor_produto" placeholder="Valor do produto"
-                            required minlength="2" value="{{ produtoEdit.valor_produto }}" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
+                            required minlength="2" value="" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
                             <div *ngIf="submitted && p.nome_produto.errors" class="invalid-feedback">
                                 <div *ngIf="p.nome_produto.errors.required">Valor obrigatório</div>
                                 <div *ngIf="p.nome_produto.errors.minlength">O valor deve ter no minimo 2 digitos</div>
@@ -231,7 +233,7 @@
                         <div class="form-group has-feedback col-md-6">
                             <label>Categoria</label>
                             <select name="cod_categoria" class="form-control" formControlName="cod_categoria" id="cod_categoria"
-                                required value="{{ produtoEdit.cod_categoria }}" [ngClass]="{ 'is-invalid': submitted && p.cod_categoria.errors }">
+                                required value="" [ngClass]="{ 'is-invalid': submitted && p.cod_categoria.errors }">
                                 <option *ngFor="let categoria of categorias" value="{{ categoria.cod_categoria }}">{{ categoria.nome_categoria }}</option>
                             </select>
                             <div *ngIf="submitted && p.cod_categoria.errors" class="invalid-feedback">
@@ -241,7 +243,7 @@
                         <div class="form-group has-feedback col-md-6">
                             <label>Fornecedor</label>
                             <select name="cod_fornecedor" class="form-control" formControlName="cod_fornecedor" id="cod_fornecedor"
-                                required value="{{ produtoEdit.cod_fornecedor }}" [ngClass]="{ 'is-invalid': submitted && p.cod_fornecedor.errors }">
+                                required value="" [ngClass]="{ 'is-invalid': submitted && p.cod_fornecedor.errors }">
                                 <option *ngFor="let fornrcedor of fornecedores" value="{{ fornrcedor.cod_fornecedor }}">{{ fornrcedor.nome_fantasia }}</option>
                             </select>
                             <div *ngIf="submitted && p.cod_fornecedor.errors" class="invalid-feedback">
