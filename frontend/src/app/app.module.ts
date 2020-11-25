@@ -28,6 +28,8 @@ import { FormaPagamentoService } from './services/formaPagamento.service';
 import { HomeBodyComponent } from './pages/home-body/home-body.component';
 import { FornecedorService } from './services/fornecedor.service';
 import { NgxMaskModule , IConfig } from 'ngx-mask';
+import { ProdutoService } from './services/produto.service';
+import { ProdutoListComponent } from './pages/produto-list/produto-list.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,6 +45,7 @@ import { NgxMaskModule , IConfig } from 'ngx-mask';
     FormaPagamentoListComponent,
     CategoriaListComponent,
     HomeBodyComponent,
+    ProdutoListComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,7 @@ import { NgxMaskModule , IConfig } from 'ngx-mask';
     CategoriaService,
     FormaPagamentoService,
     FornecedorService,
+    ProdutoService,
     AuthenticationService, 
     AlertService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

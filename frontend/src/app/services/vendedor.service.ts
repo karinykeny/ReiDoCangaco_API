@@ -10,10 +10,7 @@ export class VendedorService {
   }
 
   getAll() {
-    return this.http.get<any>(`${API_URL}/usuarios`)
-    .toPromise()
-    .then(res => <Vendedor[]>res.data)
-    .then(data => {return data;});
+    return this.http.get<any>(`${API_URL}/usuarios`);
   }
 
   getById(id: number) {
@@ -29,6 +26,6 @@ export class VendedorService {
   }
 
   createVendedor(vendedor: Vendedor) {
-    return this.http.put<Vendedor>(`${API_URL}/cadastro`, vendedor);
+    return this.http.post<Vendedor>(`${API_URL}/cadastro`, vendedor);
   }
 }

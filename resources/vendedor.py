@@ -72,7 +72,7 @@ class VendedorRegistro(Resource):
         vendedor = VendedorModel(**dados)
         vendedor.ativo = True
         vendedor.save_vendedor()
-        return vendedorCriado
+        return vendedor.json()
 
 
 class VendedorLogin(Resource):

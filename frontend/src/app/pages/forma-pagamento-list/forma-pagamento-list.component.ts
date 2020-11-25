@@ -18,6 +18,8 @@ export class FormaPagamentoListComponent implements OnInit {
   formFP: FormGroup;
   loading = false;
   submitted = false;
+  isAddMode: boolean;
+  id: number;
   public paginaAtual = 1;
 
   constructor(
@@ -31,11 +33,42 @@ export class FormaPagamentoListComponent implements OnInit {
     this.getFormasPagamento();
   }
 
+  getIsAddMode(): void {
+    if (this.fpEdit.cod_formaPgameno) {
+      this.id = this.fpEdit.cod_formaPgameno;
+      this.formaPagamentoService.getById(this.id)
+        .pipe(first()).subscribe(x => {
+          this.formFP.patchValue(x);
+          this.isAddMode = false;
+        });
+    }
+  }
+
+  getAddMode(): void {
+    this.isAddMode = true;
+    this.formFP.reset();
+  }
+
   createForm(fp: FormaPagamento) {
     this.formFP = this.formBuilder.group({
       tipo_formaPagamento: [fp.tipo_formaPagamento, [Validators.required, Validators.minLength(3), Validators.maxLength(50)] ],
       descricao_formaPagamento: [fp.descricao_formaPagamento, [Validators.required, Validators.minLength(3), Validators.maxLength(50)] ]
     })
+  }
+
+  onSubmit() {
+    this.submitted = true;
+    this.alertService.clear();
+    if (this.formFP.invalid) {
+        return;
+    }
+
+    this.loading = true;
+    if (this.isAddMode) {
+        this.saveFormasPagamento();
+    } else {
+        this.editFormasPagamento();
+    }
   }
 
   getFormasPagamento(): void {
@@ -53,13 +86,6 @@ export class FormaPagamentoListComponent implements OnInit {
   get fp() { return this.formFP.controls; }
 
   saveFormasPagamento(): void {
-    this.submitted = true;
-    this.alertService.clear();
-    if (this.formFP.invalid) { 
-      return; 
-    }
-    this.loading = true;
-
     const newFP = new FormaPagamento();
     newFP.tipo_formaPagamento = this.formFP.value.tipo_formaPagamento
     newFP.descricao_formaPagamento = this.formFP.value.descricao_formaPagamento
@@ -78,26 +104,19 @@ export class FormaPagamentoListComponent implements OnInit {
 
 
   editFormasPagamento(): void {
-    this.submitted = true;
-    this.alertService.clear();
-    if (this.formFP.invalid) { 
-      return; 
-    }
-    this.loading = true; 
-
     const infFP = new FormaPagamento();
-    infFP.cod_formaPgameno = this.fpEdit.cod_formaPgameno
+    infFP.cod_formaPgameno = this.id;
     infFP.tipo_formaPagamento = this.formFP.value.tipo_formaPagamento
     infFP.descricao_formaPagamento = this.formFP.value.descricao_formaPagamento
 
     this.formaPagamentoService.putFormaPagamento(infFP)
-    .pipe(first()).subscribe( reult => {
+    .pipe(first()).subscribe(() => {
       this.alertService.success(`Forma de pagamento com código ${infFP.cod_formaPgameno} foi alterada`);
       this.getFormasPagamento();
-      document.getElementById('closeModal').click();
+      document.getElementById('closeAddModal').click();
     }, error => {
       this.alertService.error(error);
-      document.getElementById('closeModal').click();
+      document.getElementById('closeAddModal').click();
       this.loading = false;
     })
   }
@@ -132,10 +151,6 @@ export class FormaPagamentoListComponent implements OnInit {
       fp.tipo_formaPagamento.trim().toLowerCase().includes(value.trim().toLowerCase())
      );
    }
-  }
-
-  resetForm(): void {
-    this.formFP.reset();
   }
 
   getForm(): void {

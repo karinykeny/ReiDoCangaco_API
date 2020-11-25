@@ -16,7 +16,7 @@ class Produtos(Resource):
     def get(self):
         order = [produto.json()
                  for produto in ProdutoModel.query.all()]
-        return {'fornecedores': order}
+        return {'produtos': order}
 
 
 class Produto(Resource):

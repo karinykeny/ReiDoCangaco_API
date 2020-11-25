@@ -1,1 +1,74 @@
-<p>venda works!</p>
+<div class="form-row" style="margin-top: 30px; margin-left: 20px;">
+    <div class="form-group col-md-6">
+        <div class="card">
+            <div class="card-body">
+                Vendedor: {{ vendedor }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>Incluir produtos</h3>
+                <br>
+                <h4>Pesquisar por:</h4>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label>Código:</label>
+                        <input type="text" name="login" class="form-control" formControlName="login"/>
+                    </div>
+                    <div class="form-group col-md-9">
+                        <label>Nome:</label>
+                        <input type="text" name="login" class="form-control" formControlName="login"/>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">R$</th>
+                    <th scope="col">Ação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of produtos">
+                    <th scope="row">{{ p.cod_produto }}</th>
+                    <td>{{ p.nome_produto }}</td>
+                    <td>{{ p.valor_produto }}</td>
+                    <td>
+                        <a class="edit" data-toggle="modal">
+                            <span class="glyphicon glyphicon-plus"></span></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="card">
+            <div class="card-body">
+                Quantidade de itens: {{ qtd_itens }}  -  
+              Total: {{ total |  mask: 'separator.2' }}
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Quant.</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Valor unitário</th>
+                <th scope="col">Valor total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of itens">
+                <th scope="row">{{ item.qtd_produto }}</th>
+                <td>{{ item.nome_produto }}</td>
+                <td>{{ item.valor_produto }}</td>
+                <td>{{ item.valor_compra }}</td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+
+</div>

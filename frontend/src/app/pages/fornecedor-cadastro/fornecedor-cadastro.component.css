@@ -1,6 +1,7 @@
 legend {
     margin-top: 40px;
     margin-left: 35px;
+    margin-right: 30px;
     font-size: 24px;
     color: #F44336;
     font-family: inherit;
@@ -8,6 +9,7 @@ legend {
 
 .fornecedor {
     margin-left: 35px;
+    margin-right: 25px;
 }
 
 .form-control:focus {

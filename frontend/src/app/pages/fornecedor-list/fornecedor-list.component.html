@@ -36,8 +36,8 @@
                         <h2><b>Gerenciar Fornecedores</b></h2>
                     </div>
                     <div class="col-xs-3">
-                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
-                        aria-describedby="basic-addon1">
+                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo CPF/CNPJ" aria-label="Username" 
+                        (keydown)="filtrar($event.target.value)" aria-describedby="basic-addon1">
                     </div>                    
                 </div>
             </div>
@@ -50,6 +50,7 @@
                             <th>CPF / CNPJ</th>
                             <th>Nome Fantasia</th>
                             <th>Razão Social</th>
+                            <th>Contatos</th>
                             <th>Ativo</th>
                             <th>Ações</th>
                         </tr>                
@@ -60,6 +61,9 @@
                                 <td>{{ fornecedor.cnpj_cpf }}</td>
                                 <td>{{ fornecedor.nome_fantasia }}</td>
                                 <td>{{ fornecedor.razao_social }}</td>
+                                <td><button href="#viewModal" class="edit" data-toggle="modal" [disabled]="!fornecedor.contatos.length" (mousemove)="getEditModal(fornecedor)">
+                                    <span class="glyphicon glyphicon-user"></span></button>
+                                </td>
                                 <td>{{ fornecedor.ativo }}</td>
                                 <td>
                                     <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getEditModal(fornecedor)">
@@ -163,4 +167,72 @@
     </div>
 </div>
 
+<!-- Ver dados Modal HTML -->
+<div id="viewModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content" style="margin-top: 90px; margin-left: 180px;">
+            <form>
+                <div class="modal-header">						
+                    <h4 class="modal-title">Contato</h4>
+                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body" *ngFor="let contato of fornecedorEdit.contatos  | paginate: { itemsPerPage: 1, currentPage: paginaAtualModal }; let i = index">
+                    <tr>
+                        <th><label>Código: </label></th>
+                        <td>{{ contato.cod_contato }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Nome: </label></th>
+                        <td>{{ contato.nome }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Logradouro:&nbsp;&nbsp;</label></th>
+                        <td>{{ contato.logradouro }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Número: </label></th>
+                        <td>{{ contato.numero }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Bairro: </label></th>
+                        <td>{{ contato.bairro }}</td>
+                    </tr>				
+                    <tr>
+                        <th><label>Cidade: </label></th>
+                        <td>{{ contato.cidade }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Estadoe: </label></th>
+                        <td>{{ contato.estado }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>CEP: </label></th>
+                        <td>{{ contato.cep |  mask: '0000-000' }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Complemento: </label></th>
+                        <td>{{ contato.complemento }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Telefone Fixo: </label></th>
+                        <td>{{ contato.telefone_fixo |  mask: '(00) 0000-0000' }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>Celular: </label></th>
+                        <td>{{ contato.celular |  mask: '(00) 00000-0000' }}</td>
+                    </tr>
+                    <tr>
+                        <th><label>E-mail: </label></th>
+                        <td>{{ contato.email }}</td>
+                    </tr>       
+                </div>
+                <hr>
+                <pagination-controls class="paginacao" (pageChange)="paginaAtualModal = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+                <div class="modal-footer">
+                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Sair" (click)="clean()">                
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
 

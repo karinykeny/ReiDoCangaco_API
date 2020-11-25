@@ -11,7 +11,7 @@
                         aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
                     </div>                    
                     <div class="col-xs-3">
-                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="resetForm()">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="getAddMode()">
                             <span class="glyphicon glyphicon-plus"></span> 
                             <span>&nbsp;&nbsp;Nova Forma de Pagamento</span></a>						
                     </div>
@@ -34,7 +34,7 @@
                                 <td>{{ fp.tipo_formaPagamento }}</td>
                                 <td>{{ fp.descricao_formaPagamento }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(fp)" (click)="getForm()">
+                                    <a href="#addModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(fp)" (click)="getIsAddMode()">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                                     <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(fp)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
@@ -59,9 +59,10 @@
 <div id="addModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="form" [formGroup]="formFP" (ngSubmit)="saveFormasPagamento()">
+            <form id="form" [formGroup]="formFP" (ngSubmit)="onSubmit()">
                 <div class="modal-header">						
-                    <h4 class="modal-title">Nova Forma de Pagamento</h4>
+                    <h4 class="modal-title" *ngIf="isAddMode">Nova Forma de Pagamento</h4>
+                    <h4 class="modal-title" *ngIf="!isAddMode">Editar Forma de Pagamento</h4>
                     <button id="closeAddModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
                 <div class="modal-body">				
@@ -87,57 +88,11 @@
                     </div>	
                 </div>
                 <div class="modal-footer">
-                    <button type="reset" class="btn btn-default" data-dismiss="modal" (click)="clean()">Cancelar</button>
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     <button type="submit" [disabled]="loading" class="btn btn-modal">
                         <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                         Salvar
                     </button>                    
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- Edit Modal HTML -->
-<div #editModal id="editModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form [formGroup]="formFP" (ngSubmit)="editFormasPagamento()">
-                <div class="modal-header">						
-                    <h4 class="modal-title">Editar categoria </h4>
-                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
-                </div>
-                <div class="modal-body">			
-                    <div class="form-group">
-                        <label>Código da forma de pagamento</label>
-                        <input type="text" name="cod_categoria" class="form-control" value="{{ fpEdit.cod_formaPgameno }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo</label>
-                        <input type="text" name="tipo_formaPagamento" class="form-control" formControlName="tipo_formaPagamento"
-                        required minlength="3" maxlength="50" value="{{ fpEdit.tipo_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.tipo_formaPagamento.errors }"/>
-                        <div *ngIf="submitted && fp.tipo_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="fp.tipo_formaPagamento.errors.required">Tipo inválido</div>
-                            <div *ngIf="fp.tipo_formaPagamento.errors.minlength">O tipo deve ter no minimo 3 caracteres</div>
-                            <div *ngIf="fp.tipo_formaPagamento.errors.maxlength">O tipo deve ter no máximo 50 caracteres</div>
-                        </div>
-                    </div>					
-                    <div class="form-group">
-                        <label>Descrição</label>
-                        <input type="text" name="descricao_formaPagamento" class="form-control" formControlName="descricao_formaPagamento"
-                        required minlength="3" maxlength="50" value="{{ fpEdit.descricao_formaPagamento }}" [ngClass]="{ 'is-invalid': submitted && fp.descricao_formaPagamento.errors }"/>
-                        <div *ngIf="submitted && fp.descricao_formaPagamento.errors" class="invalid-feedback">
-                            <div *ngIf="fp.descricao_formaPagamento.errors.required">Descrição inválida</div>
-                            <div *ngIf="fp.descricao_formaPagamento.errors.minlength">A descrição deve ter no minimo 3 caracteres</div>
-                            <div *ngIf="fp.descricao_formaPagamento.errors.maxlength">A descrição deve ter no máximo 50 caracteres</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Cancelar" (click)="clean()">
-                    <button type="submit" [disabled]="loading" class="btn btn-modal">
-                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                        Salvar
-                    </button>                   
                 </div>
             </form>
         </div>

@@ -13,11 +13,14 @@ import { first } from 'rxjs/operators';
 export class FornecedorListComponent implements OnInit {
 
   fornecedores = new Array<Fornecedor>();
+  fornecedores_db = new Array<Fornecedor>();
   fornecedorEdit: Fornecedor = new Fornecedor();
   formFornecedor: FormGroup;
   loading = false;
   submitted = false;
   public paginaAtual = 1;
+  public paginaAtualModal = 1;
+  contatos = this.fornecedorEdit.contatos
 
   constructor(
     private fornecedorService: FornecedorService,
@@ -43,6 +46,7 @@ export class FornecedorListComponent implements OnInit {
     this.fornecedorService.getAll().subscribe(
       result => {
         this.fornecedores = result.fornecedores;
+        this.fornecedores_db = result.fornecedores;
     });
   }
 
@@ -108,6 +112,16 @@ export class FornecedorListComponent implements OnInit {
   clean(): void {
     this.submitted = false;
     this.loading = false;
+  }
+
+  filtrar(value: any) {
+    if(!value) {
+      this.fornecedores = this.fornecedores_db;
+   } else {
+     this.fornecedores = this.fornecedores_db.filter( fornecedor => 
+      fornecedor.cnpj_cpf.trim().toLowerCase().includes(value.trim().toLowerCase())
+     );
+   }
   }
 
 }

@@ -15,7 +15,6 @@ class ProdutoModel(db.Model):
         db.Integer, db.ForeignKey('categoria.cod_categoria'))
     cod_fornecedor = db.Column(
         db.Integer, db.ForeignKey('fornecedor.cod_fornecedor'))
-    fornecedor = db.relationship("FornecedorModel")
 
     def __init__(self, cod_produto, nome_produto,
                  valor_produto, ativo, cod_categoria, cod_fornecedor):
@@ -36,10 +35,8 @@ class ProdutoModel(db.Model):
             'nome_produto':  self.nome_produto,
             'valor_produto': self.valor_produto,
             'ativo': self.ativo,
-            'categoria': ProdutoModel.__json_categoria(
-                self, self.cod_categoria),
-            'fornecedor': ProdutoModel.__json_fornecedor(
-                self, self.cod_fornecedor)
+            'cod_categoria': self.cod_categoria,
+            'cod_fornecedor': self.cod_fornecedor
         }
 
     @classmethod
