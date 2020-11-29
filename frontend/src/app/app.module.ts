@@ -30,6 +30,7 @@ import { FornecedorService } from './services/fornecedor.service';
 import { NgxMaskModule , IConfig } from 'ngx-mask';
 import { ProdutoService } from './services/produto.service';
 import { ProdutoListComponent } from './pages/produto-list/produto-list.component';
+import { PedidoService } from './services/pedido.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -63,6 +64,7 @@ import { ProdutoListComponent } from './pages/produto-list/produto-list.componen
     FormaPagamentoService,
     FornecedorService,
     ProdutoService,
+    PedidoService,
     AuthenticationService, 
     AlertService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

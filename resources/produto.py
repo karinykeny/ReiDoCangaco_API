@@ -34,7 +34,7 @@ class Produto(Resource):
     argumentos.add_argument('ativo', type=str, required=True)
 
     def get(self, id_produto):
-        produto = ProdutoModel.find_produto(id_produto)
+        produto = Produto.find_produto(id_produto)
         if produto:
             return produto.json()
         return produtoNaoEncontrado

@@ -31,7 +31,7 @@
                                 <td>{{ vendedor.login }}</td>
                                 <td>{{ getStatus(vendedor.ativo) }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(vendedor)">
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(vendedor)" (click)="getIsAddMode()">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
                                     <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(vendedor)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
@@ -93,8 +93,10 @@
                     </div>
                     <div class="form-group">
                         <label>Status</label>
-                        <input type="text" name="ativo" class="form-control" formControlName="ativo"
-                        value="{{ vendedorEdit.ativo }}" [ngClass]="{ 'is-invalid': submitted && v.ativo.errors }"/>
+                        <select style="height: 35px;" name="ativo" class="form-control" formControlName="ativo" id="ativo"
+                            required [ngClass]="{ 'is-invalid': submitted && v.ativo.errors }">
+                            <option *ngFor="let status of statusList" value="{{ vendedorEdit.ativo }}">{{ status }}</option>
+                        </select>
                         <div *ngIf="submitted && v.ativo.errors" class="invalid-feedback">
                             <div *ngIf="v.ativo.errors.required">Status inválida</div>
                         </div>

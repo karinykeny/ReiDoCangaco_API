@@ -14,7 +14,7 @@ export class ProdutoService {
   }
 
   getById(id: number) {
-    return this.http.get(`${API_URL}/produtos/${id}`);
+    return this.http.get<Produto>(`${API_URL}/produtos/${id}`);
   }
 
   putProduto(produto: Produto, id: number) {

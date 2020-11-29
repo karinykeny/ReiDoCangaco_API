@@ -11,5 +11,4 @@ export class PedidosComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }

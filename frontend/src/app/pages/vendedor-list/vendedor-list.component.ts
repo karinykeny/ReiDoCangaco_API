@@ -15,9 +15,11 @@ export class VendedorListComponent implements OnInit {
   vendedores_db = new Array<Vendedor>();
   vendedorEdit: Vendedor = new Vendedor();
   formVendedor: FormGroup;
+  id: number;
   loading = false;
   submitted = false;
   public paginaAtual = 1;
+  statusList = ["Ativo","Inativo"]
 
   constructor(
     private vendedorService: VendedorService,
@@ -28,6 +30,16 @@ export class VendedorListComponent implements OnInit {
   ngOnInit(): void {
     this.createForm(new Vendedor());
     this.getVendedores();
+  }
+
+  getIsAddMode(): void {
+    if (this.vendedorEdit.cod_vendedor) {
+      this.id = this.vendedorEdit.cod_vendedor;
+      this.vendedorService.getById(this.id)
+        .pipe(first()).subscribe(x => {
+          this.formVendedor.patchValue(x);
+        });
+    }
   }
 
   createForm(vendedor: Vendedor) {
@@ -63,11 +75,11 @@ export class VendedorListComponent implements OnInit {
     this.loading = true; 
 
     const infVendedor = new Vendedor();
-    infVendedor.cod_vendedor = this.formVendedor.value.cod_vendedor
-    infVendedor.nome_vendedor = this.formVendedor.value.nome_vendedor
-    infVendedor.login = this.formVendedor.value.login
-    infVendedor.senha = this.formVendedor.value.senha
-    infVendedor.ativo = this.formVendedor.value.ativo
+    infVendedor.cod_vendedor = this.id;
+    infVendedor.nome_vendedor = this.formVendedor.value.nome_vendedor;
+    infVendedor.login = this.formVendedor.value.login;
+    infVendedor.senha = this.formVendedor.value.senha;
+    infVendedor.ativo = this.formVendedor.value.ativo;
 
     this.vendedorService.putVendedor(infVendedor)
     .pipe(first()).subscribe( reult => {
@@ -111,10 +123,6 @@ export class VendedorListComponent implements OnInit {
       vendedor.nome_vendedor.trim().toLowerCase().includes(value.trim().toLowerCase())
      );
    }
-  }
-  
-  resetForm(): void {
-    this.formVendedor.reset();
   }
 
   getStatus(status: boolean): string {

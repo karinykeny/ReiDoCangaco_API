@@ -86,7 +86,10 @@ class VendedorLogin(Resource):
             if vendedor.ativo:
                 token_de_acesso = create_access_token(
                     identity=vendedor.cod_vendedor)
-                return {'access_token': token_de_acesso}, 200
+                return {
+                    'access_token': token_de_acesso,
+                    'vendedor': vendedor.nome_vendedor,
+                    'cod_vendedor': vendedor.cod_vendedor}, 200
             return {'message': 'Usuário não confirmado.'}, 400
         return loginInvalido
 

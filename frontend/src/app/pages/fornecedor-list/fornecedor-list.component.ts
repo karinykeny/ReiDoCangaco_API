@@ -78,11 +78,11 @@ export class FornecedorListComponent implements OnInit {
     this.loading = true; 
 
     const infFornecedor = new Fornecedor();
-    infFornecedor.cod_fornecedor = this.formFornecedor.value.cod_fornecedor
-    infFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf
-    infFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia
-    infFornecedor.razao_social = this.formFornecedor.value.razao_social
-    infFornecedor.ativo = this.formFornecedor.value.ativo
+    infFornecedor.cod_fornecedor = this.id;
+    infFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf;
+    infFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia;
+    infFornecedor.razao_social = this.formFornecedor.value.razao_social;
+    infFornecedor.ativo = this.formFornecedor.value.ativo;
 
     this.fornecedorService.putFornecedor(infFornecedor)
     .pipe(first()).subscribe( reult => {
@@ -107,7 +107,7 @@ export class FornecedorListComponent implements OnInit {
       document.getElementById('closeDelete').click();
 
     }, error => {
-      this.alertService.error(error.error.mensagem)
+      this.alertService.error(error)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })

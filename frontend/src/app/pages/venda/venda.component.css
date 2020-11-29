@@ -1,0 +1,90 @@
+.card {
+    font-family: 'Font Awesome 5 Free';
+}
+
+.card-itens {
+    height: 360px;
+}
+
+.info-label {
+    font-size: 16px;
+}
+
+.total-label {
+    margin-top: 15px; 
+    margin-right: 10px;
+}
+
+.total {
+    font-size: 36px;
+    color:  #F44336;
+}
+
+.registro-itens {
+    text-align: center;
+    font-size: 20px;
+    border-bottom-style: inset;
+    border-bottom-color:  #e5cc32;
+}
+
+.card-footer {
+    text-align: center;
+    border-top-color:  #e5cc32;
+    margin-left: 10px;
+}
+
+.item {
+    width: 20px;
+    text-align: center;
+}
+
+.vendedor {
+    border-radius: 20px;
+    width: 220px;
+    border-style: solid;
+    border-color: #e5cc32;
+    text-align: center;
+    display: flow-root;
+    height: 40px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.btn-nova {
+    margin-top: 25px;
+    height: 34px;
+    background: #dfc532;
+    border-color: #dfc532;
+    color: #fff;
+}
+
+.form-control:focus {
+    border-color: #dfc532;
+    box-shadow: 0 0 2px  #dfc532;
+} 
+
+.fechar {
+    height: 50px;
+    width: 170px;
+    margin-top: 25px;
+    font-size: 20px;
+}
+
+.linha-vertical {
+    border-left-color:  #dfc532;
+    border-left-style: solid;
+}
+
+.modal .modal-dialog {
+    z-index: 1040;
+}
+
+.modal .modal-footer {
+    background: #dfc532;
+    border-radius: 0 0 3px 3px;
+}
+
+.selecionar {
+    text-align: center; 
+    color:  #F44336;
+}

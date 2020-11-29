@@ -15,7 +15,7 @@ export class VendedorCadastroComponent implements OnInit {
   vendedor: Vendedor;
   loading = false;
   submitted = false;
-  statusList = ["Ativo","Inativo"]
+  statusList = ["Ativo","Inativo"];
 
   constructor(
     private formBuilder: FormBuilder,
