@@ -1,3 +1,4 @@
+import { ProdutoListComponent } from './pages/produto-list/produto-list.component';
 import { HomeBodyComponent } from './pages/home-body/home-body.component';
 import { CategoriaListComponent } from './pages/categoria-list/categoria-list.component';
 import { FornecedorListComponent } from './pages/fornecedor-list/fornecedor-list.component';
@@ -61,6 +62,11 @@ const routes: Routes = [
     {
       path: 'categoria-lista',
       component: CategoriaListComponent,
+      canActivate: [AuthGuard]
+    },
+    {
+      path: 'produto-lista',
+      component: ProdutoListComponent,
       canActivate: [AuthGuard]
     }
   ]

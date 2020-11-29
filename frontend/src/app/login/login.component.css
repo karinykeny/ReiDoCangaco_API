@@ -45,6 +45,8 @@ html {
     width: 100%;
     background: #c0392b !important;
     color: white !important;
+    font-size: 16px;
+    height: 35px;
 }
 .login_btn:focus {
     box-shadow: none !important;
@@ -58,11 +60,13 @@ html {
     color: white !important;
     border: 0 !important;
     border-radius: 0.25rem 0 0 0.25rem !important;
+    font-size: 16px;
 }
 .input_user,
 .input_pass:focus {
     box-shadow: none !important;
     outline: 0px !important;
+    height: 35px;
 }
 
 .container {

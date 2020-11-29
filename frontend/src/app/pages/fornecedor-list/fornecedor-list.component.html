@@ -36,8 +36,8 @@
                         <h2><b>Gerenciar Fornecedores</b></h2>
                     </div>
                     <div class="col-xs-3">
-                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
-                        aria-describedby="basic-addon1">
+                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo CPF/CNPJ" aria-label="Username" 
+                        (keydown)="filtrar($event.target.value)" aria-describedby="basic-addon1">
                     </div>                    
                 </div>
             </div>
@@ -50,7 +50,8 @@
                             <th>CPF / CNPJ</th>
                             <th>Nome Fantasia</th>
                             <th>Razão Social</th>
-                            <th>Status</th>
+                            <th>Contatos</th>
+                            <th>Ativo</th>
                             <th>Ações</th>
                         </tr>                
                     </thead>
@@ -60,11 +61,14 @@
                                 <td>{{ fornecedor.cnpj_cpf }}</td>
                                 <td>{{ fornecedor.nome_fantasia }}</td>
                                 <td>{{ fornecedor.razao_social }}</td>
+                                <td><button href="#viewModal" class="edit" data-toggle="modal" [disabled]="!fornecedor.contatos.length" (mousemove)="getInfModal(fornecedor)">
+                                    <span class="glyphicon glyphicon-user"></span></button>
+                                </td>
                                 <td>{{ fornecedor.ativo }}</td>
                                 <td>
-                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getEditModal(fornecedor)">
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(fornecedor)" (click)="isAddMode()">
                                         <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getDeleteModal(fornecedor)">
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(fornecedor)">
                                         <span class="glyphicon glyphicon-trash"></span></a>
                                 </td>
                             </tr>
@@ -100,33 +104,33 @@
                     <div class="form-group">
                         <label>CPF/CNPJ</label>
                         <input type="text" name="cnpj_cpf" class="form-control" formControlName="cnpj_cpf" minlength="3"
-                        value="{{ fornecedorEdit.cnpj_cpf }}" [ngClass]="{ 'is-invalid': submitted && ffp.cnpj_cpf.errors }"/>
-                        <div *ngIf="submitted && ffp.cnpj_cpf.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.cnpj_cpf.errors.required">Tipo inválido</div>
+                        value="" [ngClass]="{ 'is-invalid': submitted && f.cnpj_cpf.errors }"/>
+                        <div *ngIf="submitted && f.cnpj_cpf.errors" class="invalid-feedback">
+                            <div *ngIf="f.cnpj_cpf.errors.required">Tipo inválido</div>
                         </div>
                     </div>					
                     <div class="form-group">
                         <label>Nome fantasia</label>
                         <input type="text" name="nome_fantasia" class="form-control" formControlName="nome_fantasia" minlength="3"
-                        value="{{ fornecedorEdit.nome_fantasia }}" [ngClass]="{ 'is-invalid': submitted && ffp.nome_fantasia.errors }"/>
-                        <div *ngIf="submitted && ffp.nome_fantasia.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.nome_fantasia.errors.required">Descrição inválida</div>
+                        value="" [ngClass]="{ 'is-invalid': submitted && f.nome_fantasia.errors }"/>
+                        <div *ngIf="submitted && f.nome_fantasia.errors" class="invalid-feedback">
+                            <div *ngIf="f.nome_fantasia.errors.required">Descrição inválida</div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Razão social</label>
                         <input type="text" name="razao_social" class="form-control" formControlName="razao_social" minlength="3"
-                        value="{{ fornecedorEdit.razao_social }}" [ngClass]="{ 'is-invalid': submitted && ffp.razao_social.errors }"/>
-                        <div *ngIf="submitted && ffp.razao_social.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.razao_social.errors.required">Descrição inválida</div>
+                        value="" [ngClass]="{ 'is-invalid': submitted && f.razao_social.errors }"/>
+                        <div *ngIf="submitted && f.razao_social.errors" class="invalid-feedback">
+                            <div *ngIf="f.razao_social.errors.required">Descrição inválida</div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Status</label>
                         <input type="text" name="ativo" class="form-control" formControlName="ativo" minlength="3"
-                        value="{{ fornecedorEdit.ativo }}" [ngClass]="{ 'is-invalid': submitted && ffp.ativo.errors }"/>
-                        <div *ngIf="submitted && ffp.ativo.errors" class="invalid-feedback">
-                            <div *ngIf="ffp.ativo.errors.required">Descrição inválida</div>
+                        value="" [ngClass]="{ 'is-invalid': submitted && f.ativo.errors }"/>
+                        <div *ngIf="submitted && f.ativo.errors" class="invalid-feedback">
+                            <div *ngIf="f.ativo.errors.required">Descrição inválida</div>
                         </div>
                     </div>
                 </div>
@@ -163,4 +167,72 @@
     </div>
 </div>
 
+<!-- Ver dados Modal HTML -->
+<div id="viewModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content" style="margin-top: 90px; margin-left: 180px;">
+            <form>
+                <div class="modal-header">						
+                    <h4 class="modal-title">Contato</h4>
+                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body" *ngFor="let contato of fornecedorEdit.contatos  | paginate: { itemsPerPage: 1, currentPage: pagina }; let i = index">
+                    <tr>
+                        <th>Código:</th>
+                        <td >{{ contato.cod_contato }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nome:</th>
+                        <td>{{ contato.nome }}</td>
+                    </tr>
+                    <tr>
+                        <th>Logradouro:</th>
+                        <td>{{ contato.logradouro }}</td>
+                    </tr>
+                    <tr>
+                        <th>Número:</th>
+                        <td>{{ contato.numero }}</td>
+                    </tr> 
+                    <tr>
+                        <th>Bairro:</th>
+                        <td>{{ contato.bairro }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cidade:</th>
+                        <td>{{ contato.cidade }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>{{ contato.estado }}</td>
+                    </tr>
+                    <tr>
+                        <th>CEP:</th>
+                        <td>{{ contato.cep |  mask: '0000-000' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Complemento:</th>
+                        <td>{{ contato.complemento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefone Fixo:&nbsp;&nbsp;</th>
+                        <td>{{ contato.telefone_fixo |  mask: '(00) 0000-0000' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Celular:</th>
+                        <td>{{ contato.celular |  mask: '(00) 00000-0000' }}</td>
+                    </tr>
+                    <tr>
+                        <th>E-mail:</th>
+                        <td>{{ contato.email }}</td>
+                    </tr>   
+                </div>
+                <hr>
+                <pagination-controls class="paginacao" (pageChange)="pagina = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+                <div class="modal-footer">
+                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Sair" (click)="clean()">                
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 

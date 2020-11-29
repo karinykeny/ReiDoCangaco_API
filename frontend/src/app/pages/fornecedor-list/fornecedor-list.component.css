@@ -223,3 +223,11 @@ table.table .avatar {
     color: #bbb;
     font-size: 16px;
 }
+
+.cor-vermelha {
+    background-color: #db726b;
+}
+
+.cor-verde {
+    background-color: #76c06c;
+}

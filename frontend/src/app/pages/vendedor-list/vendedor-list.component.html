@@ -1,95 +1,136 @@
-<p-toast></p-toast>
-<div class="card">
-    <p-toolbar styleClass="p-mb-4">
-        <ng-template pTemplate="left">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
-            <button pButton pRipple [label]="delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedVendedores()" [disabled]="!selecioneVendedores || !selecioneVendedores.length"></button>
-        </ng-template>
-
-        <ng-template pTemplate="right">
-            <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-d-inline-block"></p-fileUpload>
-            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
-        </ng-template>
-    </p-toolbar>
-
-    <p-table #dt [value]="vendedores" [rows]="10" [paginator]="true" [globalFilterFields]="['name','country.name','representative.name','status']"
-        [(selection)]="selecioneVendedores" [rowHover]="true" dataKey="id"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
-        <ng-template pTemplate="caption">
-            <div class="p-d-flex p-ai-center p-jc-between">
-                <h5 class="p-m-0">Gerenciar Vendedores</h5>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
-                </span>
+<div class="container">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-xs-9">
+                        <h2><b>Gerenciar Vendedores</b></h2>
+                    </div>
+                    <div class="col-xs-3">
+                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
+                        (keydown)="filtrar($event.target.value)" aria-describedby="basic-addon1">
+                    </div>                    
+                </div>
             </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width: 3rem">
-                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                </th>
-                <th pSortableColumn="codigo">Código <p-sortIcon field="codigo"></p-sortIcon></th>
-                <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
-                <th pSortableColumn="login">Login <p-sortIcon field="login"></p-sortIcon></th>
-                <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-                <th></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product>
-            <tr>
-                <td>
-                    <p-tableCheckbox [value]="vendedor"></p-tableCheckbox>
-                </td>
-                <td>{{vendedor.cod_vendedor}}</td>
-                <td>{{vendedor.nome_vendedor}}</td>
-                <td>{{vendedor.login}}</td>
-                <td><span [class]="'product-badge status-' + getStatus(vendedor.ativo)">{{getStatus(vendedor.ativo)}}</span></td>
-                <td>
-                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning p-mr-2" (click)="editVendedor(vendedor)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteVendedor(vendedor)"></button>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <div class="p-d-flex p-ai-center p-jc-between">
-                No total, existem {{vendedores ? vendedores.length : 0 }} vendedores.
+            <app-alerta></app-alerta>
+            <div>
+                <table id="myTable" class="table table-striped table-hover" *ngIf="vendedores.length">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nome</th>
+                            <th>Login</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                            <tr *ngFor="let vendedor of vendedores | paginate: { itemsPerPage: 6, currentPage: paginaAtual }; let i = index">
+                                <td>{{ vendedor.cod_vendedor }}</td>
+                                <td>{{ vendedor.nome_vendedor }}</td>
+                                <td>{{ vendedor.login }}</td>
+                                <td>{{ getStatus(vendedor.ativo) }}</td>
+                                <td>
+                                    <a href="#editModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(vendedor)" (click)="getIsAddMode()">
+                                        <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(vendedor)">
+                                        <span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
             </div>
-        </ng-template>
-    </p-table>
+            <div *ngIf="vendedores.length">
+                <hr>
+                <pagination-controls class="paginacao" (pageChange)="paginaAtual = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+            </div>
+        </div>
+    </div>        
 </div>
-
-<p-dialog [(visible)]="vendedorDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" styleClass="p-fluid">
-    <ng-template pTemplate="content">
-        <div class="p-field">
-            <label for="name">Nome</label>
-            <input type="text" pInputText id="nome" [(ngModel)]="vendedor.nome_vendedor" required autofocus />
-            <small class="p-invalid" *ngIf="submitted && !vendedor.nome_vendedor">Nome é obrigatório.</small>
-        </div>
-        <div class="p-field">
-            <label for="login">Login</label>
-            <input type="password" pPassword id="login" [(ngModel)]="vendedor.login" required autofocus />
-        </div>
-
-        <div class="p-field">
-            <label class="p-mb-3">Status</label>
-            <div class="p-formgrid p-grid">
-                <div class="p-field-radiobutton p-col-6">
-                    <p-radioButton id="category1" name="category" value="true" [(ngModel)]="vendedor.ativo"></p-radioButton>
-                    <label for="category1">Ativo</label>
+<!-- Edit Modal HTML -->
+<div #editModal id="editModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form [formGroup]="formVendedor" (ngSubmit)="editVendedor()">
+                <div class="modal-header">						
+                    <h4 class="modal-title">Editar Vendedor</h4>
+                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
                 </div>
-                <div class="p-field-radiobutton p-col-6">
-                    <p-radioButton id="category2" name="category" value="false" [(ngModel)]="vendedor.ativo"></p-radioButton>
-                    <label for="category2">Inativo</label>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Código do vendedor</label>
+                        <input type="text" name="cod_categoria" class="form-control" value="{{ vendedorEdit.cod_vendedor }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Vendedor</label>
+                        <input type="text" name="nome_vendedor" class="form-control" formControlName="nome_vendedor" minlength="3" maxlength="150"
+                        value="{{ vendedorEdit.nome_vendedor }}" [ngClass]="{ 'is-invalid': submitted && v.nome_vendedor.errors }"/>
+                        <div *ngIf="submitted && v.nome_vendedor.errors" class="invalid-feedback">
+                            <div *ngIf="v.nome_vendedor.errors.required">Vendedor inválido</div>
+                            <div *ngIf="v.nome_vendedor.errors.minlength">Nome deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="v.nome_vendedor.errors.maxlength">Nome deve ter no maximo 150 caracteres</div>
+                        </div>
+                    </div>					
+                    <div class="form-group">
+                        <label>Login</label>
+                        <input type="text" name="login" class="form-control" formControlName="login" minlength="3" maxlength="50"
+                        value="{{ vendedorEdit.login }}" [ngClass]="{ 'is-invalid': submitted && v.login.errors }"/>
+                        <div *ngIf="submitted && v.login.errors" class="invalid-feedback">
+                            <div *ngIf="v.login.errors.required">Descrição inválida</div>
+                            <div *ngIf="v.login.errors.minlength">Login deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="v.login.errors.maxlength">Login deve ter no maximo 150 caracteres</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" name="senha" class="form-control" formControlName="senha" minlength="3" maxlength="50"
+                        value="{{ vendedorEdit.senha }}" [ngClass]="{ 'is-invalid': submitted && v.senha.errors }"/>
+                        <div *ngIf="submitted && v.senha.errors" class="invalid-feedback">
+                            <div *ngIf="v.senha.errors.required">Descrição inválida</div>
+                            <div *ngIf="v.senha.errors.minlength">Senha deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="v.senha.errors.maxlength">Senha deve ter no maximo 150 caracteres</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select style="height: 35px;" name="ativo" class="form-control" formControlName="ativo" id="ativo"
+                            required [ngClass]="{ 'is-invalid': submitted && v.ativo.errors }">
+                            <option *ngFor="let status of statusList" value="{{ vendedorEdit.ativo }}">{{ status }}</option>
+                        </select>
+                        <div *ngIf="submitted && v.ativo.errors" class="invalid-feedback">
+                            <div *ngIf="v.ativo.errors.required">Status inválida</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Cancelar" (click)="clean()">
+                    <button type="submit" [disabled]="loading" class="btn btn-modal">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Salvar
+                    </button>                   
+                </div>
+            </form>
         </div>
-    </ng-template>
-    
-    <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="salvar" icon="pi pi-check" class="p-button-text" (click)="saveVendedor()"></button>
-    </ng-template>
-</p-dialog>
-
-<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    </div>
+</div>
+<!-- Delete Modal HTML -->
+<div id="deleteEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">						
+                    <h4 class="modal-title">Excluir vendedor</h4>
+                    <button id="closeDelete" type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <p>Tem certeza de que deseja excluir este vendedor?</p>
+                    <p class="text-warning"><small>Essa ação não pode ser desfeita.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-modal" value="Excluir" (click)="deleteVendedor()">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

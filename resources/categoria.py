@@ -5,6 +5,7 @@ from resources.mensagem import categoriaEmUso, categoriaNaoEncontrada
 from resources.mensagem import categoriaJaExiste, erroSalvarCategoria
 from resources.mensagem import erroExcluirCategoria, categoriaExcluida
 from flask_jwt_extended import jwt_required
+import mysql.connector
 
 argumentos = reqparse.RequestParser()
 argumentos.add_argument('nome_categoria', type=str,
@@ -13,8 +14,21 @@ argumentos.add_argument('nome_categoria', type=str,
 
 class Categorias(Resource):
     def get(self):
-        order = [categoria.json() for categoria in CategoriaModel.query.all()]
-        return {'categorias': order}
+        connection = mysql.connector.connect(user='root', password='',
+                                             host='localhost', port='3307',
+                                             database='reicangaco')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM categoria")
+
+        resultado = cursor.fetchall()
+        categorias = []
+        if resultado:
+            for linha in resultado:
+                categorias.append({
+                    'cod_categoria': linha[0],
+                    'nome_categoria': linha[1]
+                })
+        return {"categorias": categorias}
 
 
 class Categoria(Resource):

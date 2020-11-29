@@ -1,10 +1,10 @@
-
 import { Categoria } from './../../models/categoria.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { CategoriaService } from 'src/app/services/categoria.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-categoria-list',
@@ -13,7 +13,8 @@ import { first } from 'rxjs/operators';
 })
 export class CategoriaListComponent implements OnInit {
 
-  categorias: Categoria[];
+  categorias = new Array<Categoria>();
+  categorias_db = new Array<Categoria>();
   categoriaEdit: Categoria = new Categoria();
   formCategoria: FormGroup;
   loading = false;
@@ -33,26 +34,19 @@ export class CategoriaListComponent implements OnInit {
 
   createForm(categoria: Categoria) {
     this.formCategoria = this.formBuilder.group({
-      nome_categoria: [categoria.nome_categoria, this.categoriaEdit.cod_categoria ? Validators.required : Validators.nullValidator ]
+      nome_categoria: [categoria.nome_categoria, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
     })
   }
 
   getCategorias(): void {
     this.categoriaService.getAll().subscribe(
       result => {
-        this.categorias = result.categorias;
+        this.categorias_db = result.categorias;
+        this.categorias = this.categorias_db;
     });
   }
 
-  getEditModal(categoria: Categoria): void {
-    this.categoriaEdit = categoria;
-  }
-
-  getAddModal(): void {
-    this.categoriaEdit = null;
-  }
-
-  getDeleteModal(categoria: Categoria): void {
+  getInfModal(categoria: Categoria): void {
     this.categoriaEdit = categoria;
   }
 
@@ -71,11 +65,11 @@ export class CategoriaListComponent implements OnInit {
 
     this.categoriaService.createCategoria(newCategoria)
     .pipe(first()).subscribe(result => {
-      this.alertService.success("Categoria criada com sucesso");
+      this.alertService.success(`Categoria ${newCategoria.nome_categoria} criada com sucesso`);
       this.getCategorias();
       document.getElementById('closeAddModal').click();
     }, error => {
-      this.alertService.error(error.error.mensagem);
+      this.alertService.error(error);
       document.getElementById('closeAddModal').click();
       this.loading = false;
     })
@@ -95,12 +89,12 @@ export class CategoriaListComponent implements OnInit {
     infCategoria.nome_categoria = this.formCategoria.value.nome_categoria
 
     this.categoriaService.putCategoria(infCategoria)
-    .pipe(first()).subscribe( reult => {
+    .pipe(first()).subscribe( () => {
       this.alertService.success(`Categoria com código ${infCategoria.cod_categoria} foi alterada`);
       this.getCategorias();
       document.getElementById('closeModal').click();
     }, error => {
-      this.alertService.error(error.error.mensagem);
+      this.alertService.error(error);
       document.getElementById('closeModal').click();
       this.loading = false;
     })
@@ -117,7 +111,7 @@ export class CategoriaListComponent implements OnInit {
       document.getElementById('closeDelete').click();
 
     }, error => {
-      this.alertService.error(error.error.mensagem)
+      this.alertService.error(error)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })
@@ -128,4 +122,18 @@ export class CategoriaListComponent implements OnInit {
     this.loading = false;
   }
 
+
+  filtrar(value: any) {
+    if(!value) {
+      this.categorias = this.categorias_db;
+   } else {
+     this.categorias = this.categorias_db.filter( categoria => 
+      categoria.nome_categoria.trim().toLowerCase().includes(value.trim().toLowerCase())
+     );
+   }
+  }
+
+  resetForm(): void {
+    this.formCategoria.reset();
+  }
 }

@@ -1,11 +1,8 @@
 export class Pedido {
     cod_pedido: number;
-
-    constructor(
-        public valor_pedido: number,
-        public data_pedido: string,
-        public status: string,
-        public cod_vendedor: number,
-        public cod_formaPgameno: number
-    ) {}
+    valor_pedido: number;
+    data_pedido: string;
+    status: string;
+    cod_vendedor: number;
+    cod_formaPgameno: number;
 }

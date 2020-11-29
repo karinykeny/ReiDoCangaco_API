@@ -19,34 +19,18 @@ import { VendaComponent } from './pages/venda/venda.component';
 import { PedidosComponent } from './pages/pedidos/pedidos.component';
 import { FornecedorCadastroComponent } from './pages/fornecedor-cadastro/fornecedor-cadastro.component';
 import { FornecedorListComponent } from './pages/fornecedor-list/fornecedor-list.component';
-import { FormaPagamentoCadastroComponent } from './pages/forma-pagamento-cadastro/forma-pagamento-cadastro.component';
 import { FormaPagamentoListComponent } from './pages/forma-pagamento-list/forma-pagamento-list.component';
 import { CategoriaListComponent } from './pages/categoria-list/categoria-list.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {TableModule} from 'primeng/table';
-import {ToastModule} from 'primeng/toast';
-import {CalendarModule} from 'primeng/calendar';
-import {SliderModule} from 'primeng/slider';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ContextMenuModule} from 'primeng/contextmenu';
-import {DialogModule} from 'primeng/dialog';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {InputTextModule} from 'primeng/inputtext';
-import {FileUploadModule} from 'primeng/fileupload';
-import {ToolbarModule} from 'primeng/toolbar';
-import {RatingModule} from 'primeng/rating';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import {PasswordModule} from 'primeng/password';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { CategoriaService } from './services/categoria.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormaPagamentoService } from './services/formaPagamento.service';
 import { HomeBodyComponent } from './pages/home-body/home-body.component';
 import { FornecedorService } from './services/fornecedor.service';
-
+import { NgxMaskModule , IConfig } from 'ngx-mask';
+import { ProdutoService } from './services/produto.service';
+import { ProdutoListComponent } from './pages/produto-list/produto-list.component';
+import { PedidoService } from './services/pedido.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,10 +43,10 @@ import { FornecedorService } from './services/fornecedor.service';
     PedidosComponent,
     FornecedorCadastroComponent,
     FornecedorListComponent,
-    FormaPagamentoCadastroComponent,
     FormaPagamentoListComponent,
     CategoriaListComponent,
     HomeBodyComponent,
+    ProdutoListComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,36 +54,19 @@ import { FornecedorService } from './services/fornecedor.service';
     HttpClientModule,
     NgxPaginationModule,
     BrowserAnimationsModule,
-    TableModule,
     AppRoutingModule,
-    CalendarModule,
-		SliderModule,
-		DialogModule,
-		MultiSelectModule,
-		ContextMenuModule,
-		DropdownModule,
-		ButtonModule,
-		ToastModule,
-    InputTextModule,
-    ProgressBarModule,
-    FileUploadModule,
-    ToolbarModule,
-    RatingModule,
     FormsModule,
-    RadioButtonModule,
-    ConfirmDialogModule,
-    PasswordModule,
-    FormsModule
+    NgxMaskModule.forRoot(),
   ],
   providers: [
     VendedorService,
     CategoriaService,
     FormaPagamentoService,
     FornecedorService,
+    ProdutoService,
+    PedidoService,
     AuthenticationService, 
     AlertService,
-    ConfirmationService,
-    MessageService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
   ],

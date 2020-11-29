@@ -6,7 +6,7 @@ from resources.produto import Produtos, Produto, ProdutoCadastro
 from resources.fornecedor import Fornecedores, Fornecedor, FornecedorCadastro
 from resources.categoria import Categorias, Categoria, CategoriaCadastro
 from resources.vendedor import Vendedores, Vendedor, VendedorRegistro
-from resources.contato import Contato, ContatoCadastro
+from resources.contato import Contato, ContatoCadastro, Contatos
 from resources.vendedor import VendedorLogin, VendedorLogout
 from resources.formaPagamento import FormasPagamento, FormaPagamento
 from resources.formaPagamento import FormaPagamentoCadastro
@@ -62,6 +62,7 @@ api.add_resource(CategoriaCadastro, '/categorias/cadastro')
 api.add_resource(Categoria, '/categorias/<int:cod_categoria>')
 
 # Contato
+api.add_resource(Contatos, '/contatos')
 api.add_resource(ContatoCadastro, '/contato/cadastro')
 api.add_resource(Contato, '/contato/<int:cod_contato>')
 

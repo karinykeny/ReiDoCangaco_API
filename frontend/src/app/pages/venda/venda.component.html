@@ -1,1 +1,141 @@
-<p>venda works!</p>
+<div class="row" style="margin-top: 5px; margin-left: 5px;">
+
+  <div class="col-6 p-0">
+    <div>
+      <div class="row vendedor">
+        <div style="margin-top: 7px;">
+          <label>Vendedor:&nbsp;&nbsp;</label>
+          <label>{{ currentUser.vendedor }}</label>
+        </div>
+      </div>
+      <div class="card-body">
+        <h4>Adicionar produto:</h4>
+        <app-alerta></app-alerta>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>Código:</label>
+              <input type="number" class="form-control" [mask]="0000000000" formControlName="cod_produto"
+              placeholder="0000000000" (keydown)="setProduto($event.target.value)"/>
+            </div>
+            <div class="form-group col-md-3">
+              <label>Quantidade:</label>
+              <input type="number" name="login" placeholder="000000" class="form-control" (keydown)="quantidade($event.target.value)"/>
+            </div>
+            <div class="form-group col-md-1">
+              <button data-toggle="modal" class="btn btn-nova" (click)="getProduto()">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </div> 
+            <div class="form-group col-md-1">
+              <button href="#addModal" data-toggle="modal" class="btn btn-nova" ><span class="glyphicon glyphicon-zoom-in"></span></button>
+            </div>         
+          </div>
+          <div class="form-group">
+            <label>Nome:</label>
+            <input type="text" name="nome_produto" class="form-control" formControlName="nome_produto"
+            value="{{ produto.nome_produto }}" disabled/>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>R$ Unidade:</label>
+              <input type="text" name="login" class="form-control" formControlName="valor_produto" 
+              value="{{ produto.valor_produto }}" disabled/>
+            </div>
+            <div class="form-group col-md-5">
+              <label>R$ Total:</label>
+              <input type="text" name="login" class="form-control" value="{{ valorTotal }}" disabled/>
+            </div>
+          </div>
+          <button class="btn btn-nova">Add produto</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 p-0 linha-vertical">
+    <div>
+      <div class="card-body">
+        <div class="registro-itens">
+          <label>Ítens Registrados</label>
+        </div>
+        <div class="card-itens">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Quant.</th>
+                <th scope="col">Produto</th>
+                <th scope="col">R$ unit.</th>
+                <th scope="col">R$ total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of itens">
+                <th scope="row" style="padding-left: 30px;">{{ item.qtd_produto }}</th>
+                <td>{{ item.nome_produto }}</td>
+                <td>{{ item.valor_produto | currency:'BRL' :true: '1.2-2' }}</td>
+                <td>{{ item.valor_compra | currency:'BRL' :true: '1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>
+
+<div class="card-footer">
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-cangaco fechar">Fechar Venda</button>
+    </div>
+    <div class="col">
+      <div class="row" style="display: inherit;"> 
+        <label class="info-label total-label">Total:</label>
+        <label class="total">{{ getTotal() | currency:'BRL' :true: '1.2-2' }}</label>
+      </div>
+      <label class="info-label">Quantidade de itens: &nbsp;{{ getQtdItens() }}</label><br>
+      <label class="info-label">{{ data | date:'dd/MM/yyyy  h:mm:ss' }}</label>
+    </div>
+  </div>
+  
+</div>
+
+
+<div id="addModal" class="modal fade">
+  <div class="modal-dialog modal-lg" style="margin: 90px auto;">
+      <div class="modal-content modal-lg" style="width: 500px">
+          <form>
+              <div class="modal-header">						
+                  <h4 class="modal-title">Produtos</h4>
+                  <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">Código</th>
+                      <th scope="col">Nome</th>
+                      <th scope="col">R$</th>
+                      <th scope="col" style="text-align: center;">Selecionar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let p of produtos">
+                      <th scope="row">{{ p.cod_produto }}</th>
+                      <td>{{ p.nome_produto }}</td>
+                      <td>{{ p.valor_produto | currency:'BRL' :true: '1.2-2' }}</td>
+                      <td class="selecionar">
+                          <a class="edit" data-toggle="modal">
+                            <span class="glyphicon glyphicon-check"></span></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                  <input type="reset" class="btn btn-default" data-dismiss="modal" value="Fechar">               
+              </div>
+          </form>
+      </div>
+  </div>
+</div>

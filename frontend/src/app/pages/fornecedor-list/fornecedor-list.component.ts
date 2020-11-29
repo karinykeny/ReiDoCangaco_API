@@ -12,12 +12,16 @@ import { first } from 'rxjs/operators';
 })
 export class FornecedorListComponent implements OnInit {
 
-  fornecedores: Fornecedor[];
+  fornecedores = new Array<Fornecedor>();
+  fornecedores_db = new Array<Fornecedor>();
   fornecedorEdit: Fornecedor = new Fornecedor();
   formFornecedor: FormGroup;
   loading = false;
   submitted = false;
+  id: number;
   public paginaAtual = 1;
+  public pagina = 1;
+  contatos = this.fornecedorEdit.contatos
 
   constructor(
     private fornecedorService: FornecedorService,
@@ -29,6 +33,17 @@ export class FornecedorListComponent implements OnInit {
     this.createForm(new Fornecedor());
     this.getFornecedores();
   }
+
+  isAddMode(): void {
+    if (this.fornecedorEdit.cod_fornecedor) {
+      this.id = this.fornecedorEdit.cod_fornecedor;
+      this.fornecedorService.getById(this.id)
+        .pipe(first()).subscribe(x => {
+          this.formFornecedor.patchValue(x);
+        });
+    }
+  }
+
 
   createForm(fornecedor: Fornecedor) {
     this.formFornecedor = this.formBuilder.group({
@@ -43,48 +58,15 @@ export class FornecedorListComponent implements OnInit {
     this.fornecedorService.getAll().subscribe(
       result => {
         this.fornecedores = result.fornecedores;
+        this.fornecedores_db = result.fornecedores;
     });
   }
 
-  getEditModal(fornecedor: Fornecedor): void {
+  getInfModal(fornecedor: Fornecedor): void {
     this.fornecedorEdit = fornecedor;
   }
 
-  getAddModal(): void {
-    this.fornecedorEdit = null;
-  }
-
-  getDeleteModal(fornecedor: Fornecedor): void {
-    this.fornecedorEdit = fornecedor;
-  }
-
-  get ffp() { return this.formFornecedor.controls; }
-
-  saveFormasPagamento(): void {
-    this.submitted = true;
-    this.alertService.clear();
-    if (this.formFornecedor.invalid) { 
-      return; 
-    }
-    this.loading = true;
-
-    const newFornecedor = new Fornecedor();
-    newFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf
-    newFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia
-    newFornecedor.razao_social = this.formFornecedor.value.razao_social
-    newFornecedor.ativo = this.formFornecedor.value.ativo
-
-    this.fornecedorService.createFornecedor(newFornecedor)
-    .pipe(first()).subscribe(result => {
-      this.alertService.success("Fornecedor criada com sucesso");
-      this.getFornecedores();
-      document.getElementById('closeAddModal').click();
-    }, error => {
-      this.alertService.error(error.error.mensagem);
-      document.getElementById('closeAddModal').click();
-      this.loading = false;
-    })
-  }
+  get f() { return this.formFornecedor.controls; }
 
 
   editFornecedor(): void {
@@ -96,11 +78,11 @@ export class FornecedorListComponent implements OnInit {
     this.loading = true; 
 
     const infFornecedor = new Fornecedor();
-    infFornecedor.cod_fornecedor = this.formFornecedor.value.cod_fornecedor
-    infFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf
-    infFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia
-    infFornecedor.razao_social = this.formFornecedor.value.razao_social
-    infFornecedor.ativo = this.formFornecedor.value.ativo
+    infFornecedor.cod_fornecedor = this.id;
+    infFornecedor.cnpj_cpf = this.formFornecedor.value.cnpj_cpf;
+    infFornecedor.nome_fantasia = this.formFornecedor.value.nome_fantasia;
+    infFornecedor.razao_social = this.formFornecedor.value.razao_social;
+    infFornecedor.ativo = this.formFornecedor.value.ativo;
 
     this.fornecedorService.putFornecedor(infFornecedor)
     .pipe(first()).subscribe( reult => {
@@ -125,7 +107,7 @@ export class FornecedorListComponent implements OnInit {
       document.getElementById('closeDelete').click();
 
     }, error => {
-      this.alertService.error(error.error.mensagem)
+      this.alertService.error(error)
       document.getElementById('closeDelete').click();
       this.loading = false;
     })
@@ -134,6 +116,16 @@ export class FornecedorListComponent implements OnInit {
   clean(): void {
     this.submitted = false;
     this.loading = false;
+  }
+
+  filtrar(value: any) {
+    if(!value) {
+      this.fornecedores = this.fornecedores_db;
+   } else {
+     this.fornecedores = this.fornecedores_db.filter( fornecedor => 
+      fornecedor.cnpj_cpf.trim().toLowerCase().includes(value.trim().toLowerCase())
+     );
+   }
   }
 
 }

@@ -1,0 +1,203 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // Activate tooltip
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        // Select/Deselect checkboxes
+        var checkbox = $('table tbody input[type="checkbox"]');
+        $("#selectAll").click(function(){
+            if(this.checked){
+                checkbox.each(function(){
+                    this.checked = true;                        
+                });
+            } else{
+                checkbox.each(function(){
+                    this.checked = false;                        
+                });
+            } 
+        });
+        checkbox.click(function(){
+            if(!this.checked){
+                $("#selectAll").prop("checked", false);
+            }
+        });
+    });
+</script>
+<div class="container">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <h2><b>Gerenciar Produtos</b></h2>
+                    </div>
+                    <div class="col-xs-3">
+                        <input id="myInput" type="text" class="form-control" placeholder="Pesquisa pelo nome" aria-label="Username" 
+                        aria-describedby="basic-addon1" (keydown)="filtrar($event.target.value)">
+                    </div>                    
+                    <div class="col-xs-2">
+                        <a href="#addModal" class="btn btn-nova" data-toggle="modal" (click)="getAddMode()">
+                            <span class="glyphicon glyphicon-plus"></span> 
+                            <span>&nbsp;&nbsp;Novo Produto</span></a>						
+                    </div>
+                </div>
+            </div>
+            <app-alerta></app-alerta>
+            <div>
+                <table id="myTable" class="table table-striped table-hover" *ngIf="produtos.length">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nome do produto</th>
+                            <th>R$</th>
+                            <th>Ativo</th>
+                            <th>Categoria</th>
+                            <th>Fornecedor</th>
+                            <th>Ações</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                            <tr *ngFor="let produto of produtos | paginate: { itemsPerPage: 6, currentPage: paginaAtual }; let i = index">
+                                <td>{{ produto.cod_produto }}</td>
+                                <td>{{ produto.nome_produto }}</td>
+                                <td mask="separator.2" thousandSeparator=",">R$&nbsp;{{  produto.valor_produto | mask: 'separator':',' }}</td>
+                                <td>{{ produto.ativo }}</td>
+                                <td>{{ getCategoria(produto.cod_categoria) }}</td>
+                                <td>{{ getFornecedor(produto.cod_fornecedor) }}</td>
+                                <td>
+                                    <a href="#addModal" class="edit" data-toggle="modal" (mousemove)="getInfModal(produto)" (click)="getIsAddMode()">
+                                        <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" (mousemove)="getInfModal(produto)">
+                                        <span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+                <div class="not-fp" *ngIf="!produtos.length">
+                    <hr>
+                    <span style=" font-size: 100px; margin-top: 30px;" class="glyphicon glyphicon-remove-circle"></span>
+                    <br><p>Não existem produtos cadastrados</p>
+                </div>
+            </div>
+            <div *ngIf="produtos.length">
+                <hr>
+                <pagination-controls class="paginacao" (pageChange)="paginaAtual = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+            
+            </div>
+        </div>
+    </div>        
+</div>
+
+<div id="addModal" class="modal fade">
+    <div class="modal-dialog modal-lg" style="margin: 90px auto;">
+        <div class="modal-content modal-lg" style="width: 500px">
+            <form [formGroup]="formProduto" (ngSubmit)="onSubmit()">
+                <div class="modal-header">						
+                    <h4 class="modal-title" *ngIf="isAddMode">Novo Produto</h4>
+                    <h4 class="modal-title" *ngIf="!isAddMode">Editar Produto</h4>
+                    <button id="closeModal" type="reset" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group has-feedback col-md-6">
+                            <label for="nome_categoria">Código</label>
+                            <input #myInput type="text" id="cod_produto" name="cod_produto" class="form-control" formControlName="cod_produto" placeholder="Código do produto"
+                            required minlength="1" maxlength="50" [ngClass]="{ 'is-invalid': submitted && p.cod_produto.errors }"/>
+                            <div *ngIf="submitted && p.cod_produto.errors" class="invalid-feedback">
+                                <div *ngIf="p.cod_produto.errors.required">Nome obrigatório</div>
+                                <div *ngIf="p.cod_produto.errors.minlength">O código deve ter no minimo 3 caracteres</div>
+                                <div *ngIf="p.cod_produto.errors.maxlength">O código deve ter no máximo 50 caracteres</div>
+                            </div>                          
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="nome_categoria">Nome do produto</label>
+                        <input #myInput type="text" id="nome_produto" name="nome_produto" class="form-control" formControlName="nome_produto" placeholder="Nome do produto"
+                        required minlength="3" maxlength="150" value="" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
+                        <div *ngIf="submitted && p.nome_produto.errors" class="invalid-feedback">
+                            <div *ngIf="p.nome_produto.errors.required">Nome obrigatório</div>
+                            <div *ngIf="p.nome_produto.errors.minlength">O nome deve ter no minimo 3 caracteres</div>
+                            <div *ngIf="p.nome_produto.errors.maxlength">O nome deve ter no máximo 150 caracteres</div>
+                        </div>                          
+                    </div>				
+                    <div class="form-row">
+                        <div class="form-group has-feedback col-md-7">
+                            <label for="nome_categoria">Valor do produto</label>
+                            <input #myInput type="text" id="valor_produto" name="valor_produto" class="form-control" formControlName="valor_produto" placeholder="Valor do produto"
+                            required minlength="2" value="" [ngClass]="{ 'is-invalid': submitted && p.nome_produto.errors }"/>
+                            <div *ngIf="submitted && p.nome_produto.errors" class="invalid-feedback">
+                                <div *ngIf="p.nome_produto.errors.required">Valor obrigatório</div>
+                                <div *ngIf="p.nome_produto.errors.minlength">O valor deve ter no minimo 2 digitos</div>
+                            </div>                          
+                        </div>
+                        <div class="form-group has-feedback col-md-5">
+                            <label for="nome_categoria">Ativo</label>
+                            <select name="ativo" class="form-control" formControlName="ativo" id="ativo"
+                                required value="Sim" [ngClass]="{ 'is-invalid': submitted && p.ativo.errors }">
+                                <option *ngFor="let item of ativosList" value="{{ item }}">{{ item }}</option>
+                            </select>
+                            <div *ngIf="submitted && p.ativo.errors" class="invalid-feedback">
+                                <div *ngIf="p.ativo.errors.required">Ativo obrigatório</div>
+                            </div>                          
+                        </div>
+                    </div>	
+                    <div class="form-row">
+                        <div class="form-group has-feedback col-md-6">
+                            <label>Categoria</label>
+                            <select name="cod_categoria" class="form-control" formControlName="cod_categoria" id="cod_categoria"
+                                required value="" [ngClass]="{ 'is-invalid': submitted && p.cod_categoria.errors }">
+                                <option *ngFor="let categoria of categorias" value="{{ categoria.cod_categoria }}">{{ categoria.nome_categoria }}</option>
+                            </select>
+                            <div *ngIf="submitted && p.cod_categoria.errors" class="invalid-feedback">
+                                <div *ngIf="p.cod_categoria.errors.required">Categoria obrigatória</div>
+                            </div>                          
+                        </div>
+                        <div class="form-group has-feedback col-md-6">
+                            <label>Fornecedor</label>
+                            <select name="cod_fornecedor" class="form-control" formControlName="cod_fornecedor" id="cod_fornecedor"
+                                required value="" [ngClass]="{ 'is-invalid': submitted && p.cod_fornecedor.errors }">
+                                <option *ngFor="let fornrcedor of fornecedores" value="{{ fornrcedor.cod_fornecedor }}">{{ fornrcedor.nome_fantasia }}</option>
+                            </select>
+                            <div *ngIf="submitted && p.cod_fornecedor.errors" class="invalid-feedback">
+                                <div *ngIf="p.cod_fornecedor.errors.required">Fornecedor obrigatório</div>
+                            </div>                          
+                        </div>
+                    </div>    	
+                </div>
+                <div class="modal-footer">
+                    <input type="reset" class="btn btn-default" data-dismiss="modal" value="Cancelar" (click)="clean()">
+                    <button type="submit" [disabled]="loading" class="btn btn-modal">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Salvar
+                    </button>                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal HTML -->
+<div id="deleteEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">						
+                    <h4 class="modal-title">Excluir produto</h4>
+                    <button id="closeDelete" type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clean()">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <p>Tem certeza de que deseja excluir esté produto?</p>
+                    <p class="text-warning"><small>Essa ação não pode ser desfeita.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+                    <input type="submit" class="btn btn-modal" value="Excluir" (click)="deleteCategoria()">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
